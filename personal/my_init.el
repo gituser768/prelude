@@ -6,6 +6,7 @@
 (load "org-config.el")
 (load "keybindings.el")
 (load "magit-config.el")
+(load "yas-conf.el")
 
 (require 'which-key)
 (require 'modalka)
@@ -53,7 +54,18 @@
 (require 'jade-mode)
 (add-to-list 'auto-mode-alist '("\\.styl\\'" . stylus-mode))
 (add-to-list 'auto-mode-alist '("\\.jade\\'" . jade-mode))
+(add-to-list 'auto-mode-alist '("\\.pug\\'" . jade-mode))
+(add-hook 'sws-mode-hook 'subword-mode)
+(add-hook 'jade-mode-hook 'subword-mode)
+(add-hook 'stylus-mode-hook 'subword-mode)
 
-(yas-global-mode)
+(require 'avy)
+(advice-add 'avy-goto-word-1 :before (lambda (&rest r)
+                                       (interactive (list (read-char "char: " t)
+                                                          (point)))
+                                       (set-mark (nth 2 r))
+                                       (set-mark (nth 2 r))))
+
+(setq company-tooltip-flip-when-above nil)
 
 (provide 'my-init)

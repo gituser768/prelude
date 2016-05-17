@@ -1,3 +1,5 @@
+(global-unset-key (kbd "M-u"))
+
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c DEL") 'winner-undo)
@@ -15,6 +17,10 @@
     (define-key map (kbd "s-p") 'previous-line)
     (define-key map (kbd "C-SPC") 'my-set-mark)
     (define-key map (kbd "M-:") 'helm-eval-expression-with-eldoc)
+    (define-key map (kbd "M-u") 'sp-splice-sexp-killing-backward)
+    (define-key map (kbd "C-M-<backspace>") 'backward-kill-sexp)
+    (define-key map (kbd "M-l") 'move-to-window-line-top-bottom)
+    (define-key map (kbd "C-<return>") 'move-past-close-and-reindent)
     map)
   "my-keys-minor-mode keymap.")
 
@@ -93,5 +99,10 @@
 (modalka-define-kbd "s-l" "s-<right>")
 
 (setq modalka-cursor-type 'box)
+
+(define-key prelude-mode-map (kbd "s-h") nil)
+(define-key prelude-mode-map (kbd "s-j") nil)
+(define-key prelude-mode-map (kbd "s-k") nil)
+(define-key prelude-mode-map (kbd "s-l") nil)
 
 (provide 'keybindings)

@@ -13,6 +13,8 @@
 (key-chord-define-global ",f" 'fastnav-sprint-forward)
 (key-chord-define-global ",b" 'fastnav-sprint-backward)
 (key-chord-define-global ",x" 'helm-M-x)
+(key-chord-define-global ",d" 'dired)
+(key-chord-define-global ",t" 'multi-term)
 (key-chord-define-global ",g" 'magit-status)
 (key-chord-define-global ",c" 'magit-checkout)
 (key-chord-define-global ",p" 'magit-push)
