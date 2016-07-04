@@ -40,4 +40,6 @@
 
 (advice-add 'save-buffer :before 'whitespace-cleanup)
 
+(beacon-mode -1)
+
 (provide 'my-init)
