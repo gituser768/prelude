@@ -22,6 +22,9 @@
     (define-key map (kbd "M-l") 'move-to-window-line-top-bottom)
     (define-key map (kbd "C-<return>") 'move-past-close-and-reindent)
     (define-key map (kbd "C-c t") 'multi-term)
+    (define-key map (kbd "C-M-h") 'mark-to-end-of-paragraph)
+    (define-key map (kbd "M-)") 'kill-to-end-of-sexp)
+    (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
     map)
   "my-keys-minor-mode keymap.")
 

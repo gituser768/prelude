@@ -24,7 +24,7 @@
         (text-scale-decrease 2))
     (progn
       (text-scale-increase 2)
-      (set-face-attribute 'region nil :background "#19ff00"))))
+      (set-face-attribute 'region nil :background "firebrick"))))
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
 

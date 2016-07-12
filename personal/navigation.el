@@ -8,6 +8,25 @@
     (setq mark-ring (nbutlast mark-ring))
     (goto-char (marker-position (car (last mark-ring))))))
 
+(defun mark-to-end-of-paragraph (&optional arg)
+  (interactive "p")
+  (call-interactively 'set-mark-command)
+  (call-interactively 'mark-paragraph))
+
+(defun kill-to-end-of-sexp (&optional arg)
+  (interactive "p")
+  (call-interactively 'set-mark-command)
+  (call-interactively 'sp-up-sexp)
+  (call-interactively 'backward-char)
+  (call-interactively 'kill-region))
+
+(defun kill-to-beginning-of-sexp (&optional arg)
+  (interactive "p")
+  (call-interactively 'set-mark-command)
+  (call-interactively 'sp-backward-up-sexp)
+  (call-interactively 'forward-char)
+  (call-interactively 'kill-region))
+
 (defun my-set-mark (arg)
   (interactive "p")
   (if (> arg 0)
