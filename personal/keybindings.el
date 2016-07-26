@@ -25,6 +25,7 @@
     (define-key map (kbd "C-M-h") 'mark-to-end-of-paragraph)
     (define-key map (kbd "M-)") 'kill-to-end-of-sexp)
     (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
+    (define-key map (kbd "C-M-q") 'unfill-region)
     map)
   "my-keys-minor-mode keymap.")
 
