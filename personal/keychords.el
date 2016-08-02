@@ -13,7 +13,7 @@
 (key-chord-define-global "zz" 'zop-up-to-char)
 (key-chord-define-global "zb" (lambda (&optional arg)
                                 (interactive "p")
-                                (zop-up-to-char -1)))
+                                (zop-to-char -1)))
 
 (key-chord-define-global ",," 'repeat)
 (key-chord-define-global "fv" 'fastnav-sprint-forward)

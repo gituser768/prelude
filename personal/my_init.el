@@ -40,6 +40,8 @@
 
 (advice-add 'save-buffer :before 'whitespace-cleanup)
 
+(add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode)
+
 (beacon-mode -1)
 
 (provide 'my-init)
