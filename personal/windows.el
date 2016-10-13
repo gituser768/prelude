@@ -5,6 +5,14 @@
 
 (windmove-default-keybindings 'super)
 
+(defun find-at-point-other-window (&optional arg)
+  (interactive)
+  (other-window 1)
+  (crux-switch-to-previous-buffer)
+  (find-file-at-point))
+
+(global-set-key (kbd "C-x 4 RET") 'find-at-point-other-window)
+
 (defun split-horiz-find (arg)
   (interactive "p")
   (split-window-below)
@@ -16,5 +24,8 @@
   (split-window-right)
   (other-window arg)
   (helm-find-files-1 default-directory))
+
+(load "escreen")
+(escreen-install)
 
 (provide 'windows)

@@ -26,6 +26,11 @@
     (define-key map (kbd "M-)") 'kill-to-end-of-sexp)
     (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
     (define-key map (kbd "C-M-q") 'unfill-region)
+    (define-key map (kbd "M-m") 'delete-indentation)
+    (define-key map (kbd "M-n") 'next-logical-line)
+    (define-key map (kbd "M-p") 'previous-logical-line)
+    (define-key map (kbd "C-\\ C-\\") 'escreen-goto-next-screen)
+    (define-key map (kbd "s-f") 'swiper)
     map)
   "my-keys-minor-mode keymap.")
 
@@ -44,9 +49,22 @@
     (move-end-of-line nil)
     (kill-ring-save (mark) (point))))
 
+(defun mark-at-end-or-copy-line ()
+  (interactive)
+  (if (use-region-p)
+      (copy-line)
+    (progn
+      (set-mark-command nil)
+      (move-end-of-line nil)
+      (exchange-point-and-mark))))
+
 (global-unset-key (kbd "s-y"))
 
-(global-set-key (kbd "s-y s-y") 'copy-line)
+(global-set-key (kbd "s-y") 'mark-at-end-or-copy-line)
+
+(defun dh-get-relative-path ()
+    (interactive)
+    (insert (file-relative-name (read-string "Absolute Path: "))))
 
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
   "Don't allow esc esc esc to destroy other windows"
@@ -59,12 +77,21 @@
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(define-key coffee-mode-map (kbd "C-c C-c r") 'coffee-compile-region)
+(define-key coffee-mode-map (kbd "C-c C-c b") 'coffee-compile-buffer)
+
 (define-key dired-mode-map (kbd "TAB") 'dired-subtree-toggle)
 
 (define-key company-active-map (kbd "<escape>") 'company-abort)
 (define-key company-active-map (kbd "C-n") 'company-select-next)
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
 (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+
+(require 'helm-ag)
+
+(define-key helm-ag-mode-map (kbd "n") 'next-logical-line)
+(define-key helm-ag-mode-map (kbd "p") 'previous-logical-line)
+(define-key helm-ag-mode-map (kbd "o") 'helm-ag-mode-jump-other-window)
 
 (global-unset-key (kbd "s-e"))
 (global-unset-key (kbd "s-r"))

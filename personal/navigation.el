@@ -30,7 +30,9 @@
 (defun my-set-mark (arg)
   (interactive "p")
   (if (> arg 0)
-      (call-interactively 'set-mark-command)
+      (if (region-active-p)
+          (deactivate-mark)
+          (call-interactively 'set-mark-command))
     (unpop-to-mark-command)))
 
 (require 'avy)
@@ -47,5 +49,35 @@
   (interactive "*r")
   (let ((fill-column (point-max)))
     (fill-region beg end)))
+
+(defun chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
+                                    (: (* (any " \t\n")) eos)))
+                            ""
+                            str))
+
+(setq filter-buffer-substring-function
+      (lambda (beg end delete)
+        (save-excursion
+          (let ((killed-string (chomp (buffer-substring beg end))))
+            (when delete (delete-region beg end))
+            killed-string))))
+
+
+
+(setq projectile-test-suffix-function
+      (lambda (project-type)
+        (cond
+         ((member project-type '(rebar)) "_SUITE")
+         ((member project-type '(emacs-cask)) "-test")
+         ((member project-type '(rails-rspec ruby-rspec)) "_spec")
+         ((member project-type '(rails-test ruby-test lein-test boot-clj go elixir)) "_test")
+         ((member project-type '(scons)) "test")
+         ((member project-type '(maven symfony)) "Test")
+         ((member project-type '(gradle gradlew grails)) "Spec")
+         ((member project-type '(sbt)) "Spec")
+         ((member project-type '(clojure)) "-test")
+         ((member project-type '(generic)) "_test"))))
 
 (provide 'navigation)

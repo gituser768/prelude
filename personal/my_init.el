@@ -15,6 +15,8 @@
 
 (which-key-mode)
 
+(setq jiralib-url "https://dmgxteam.atlassian.net")
+
 (rainbow-delimiters-mode)
 
 (define-minor-mode code-review-mode
@@ -25,6 +27,15 @@
     (progn
       (text-scale-increase 2)
       (set-face-attribute 'region nil :background "firebrick"))))
+
+(defun test-file-hook ()
+  (when (string-match-p "test" buffer-file-name)
+    (tertestrial-mode)))
+(add-hook 'find-file-hook 'test-file-hook)
+
+;; (defun git-clone (repo-path)
+;;   (interactive "sGit repo: ")
+;;   (async-shell-command (concat "git clone " repo-path "/Users/dany/Documents/")))
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
 
@@ -43,5 +54,11 @@
 (add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode)
 
 (beacon-mode -1)
+
+(setq ivy-re-builders-alist
+      '((t . ivy--regex-ignore-order)))
+(setq ivy-initial-inputs-alist '())
+
+(server-start)
 
 (provide 'my-init)
