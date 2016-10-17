@@ -77,6 +77,7 @@
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(require 'coffee-mode)
 (define-key coffee-mode-map (kbd "C-c C-c r") 'coffee-compile-region)
 (define-key coffee-mode-map (kbd "C-c C-c b") 'coffee-compile-buffer)
 
