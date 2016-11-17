@@ -1,4 +1,5 @@
 (global-unset-key (kbd "M-u"))
+(global-unset-key (kbd "s-a"))
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -31,8 +32,16 @@
     (define-key map (kbd "M-p") 'previous-logical-line)
     (define-key map (kbd "C-\\ C-\\") 'escreen-goto-next-screen)
     (define-key map (kbd "s-f") 'swiper)
+    (define-key map (kbd "s-p") 'diff-hl-previous-hunk)
+    (define-key map (kbd "s-n") 'diff-hl-next-hunk)
+    (define-key map (kbd "s-h") 'end-of-coffee-block)
+    (define-key map (kbd "s-a") 'move-to-first-alpha)
+    (define-key map (kbd "s-b") 'up-one-coffee-block)
+    (define-key map (kbd "C-M-y") 'yank-and-pop)
+    (define-key map (kbd "C-M-i") 'hippie-expand)
     map)
   "my-keys-minor-mode keymap.")
+
 
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
@@ -40,6 +49,14 @@
   :lighter "")
 
 (my-keys-minor-mode 1)
+
+(setq indent-rigidly-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map (kbd "C-b")  'indent-rigidly-left)
+        (define-key map (kbd "C-f") 'indent-rigidly-right)
+        (define-key map (kbd "C-S-b")  'indent-rigidly-left-to-tab-stop)
+        (define-key map (kbd "C-S-f") 'indent-rigidly-right-to-tab-stop)
+        map))
 
 (defun copy-line ()
   (interactive)
@@ -49,9 +66,15 @@
     (move-end-of-line nil)
     (kill-ring-save (mark) (point))))
 
+(defun end-of-line-p ()
+  (interactive)
+  (let ((cur-col (current-column))
+        (end-col (save-excursion (end-of-line) (current-column))))
+    (= cur-col end-col)))
+
 (defun mark-at-end-or-copy-line ()
   (interactive)
-  (if (use-region-p)
+  (if (or (use-region-p) (call-interactively 'end-of-line-p))
       (copy-line)
     (progn
       (set-mark-command nil)
@@ -137,5 +160,7 @@
 (define-key prelude-mode-map (kbd "s-j") nil)
 (define-key prelude-mode-map (kbd "s-k") nil)
 (define-key prelude-mode-map (kbd "s-l") nil)
+
+(define-key global-map (kbd "C-x C-c") nil)
 
 (provide 'keybindings)

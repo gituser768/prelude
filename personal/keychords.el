@@ -38,6 +38,7 @@
 (key-chord-define-global "qk" 'kill-buffer)
 
 (key-chord-define-global "lj" nil)
+(key-chord-define-global "yy" nil)
 
 (provide 'keychords)
 ;;; keychords ends here

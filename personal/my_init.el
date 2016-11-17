@@ -9,6 +9,7 @@
 (load "yas-conf.el")
 (load "web-config.el")
 (load "term-config.el")
+(load "latex-config.el")
 
 (require 'which-key)
 (require 'modalka)
@@ -18,6 +19,14 @@
 (setq jiralib-url "https://dmgxteam.atlassian.net")
 
 (rainbow-delimiters-mode)
+
+(setq thesaurus-bhl-api-key "a6f1f7cbef19ca997bc341270494fad2")
+
+(setq hippie-expand-verbose t)
+
+(size-indication-mode -1)
+(set-face-attribute 'mode-line nil  :height 150)
+(set-face-attribute 'mode-line-inactive nil  :height 150)
 
 (define-minor-mode code-review-mode
   (if code-review-mode
@@ -41,6 +50,15 @@
 
 (setq semanticdb-global-mode t)
 
+(require 'projectile)
+(setq projectile-mode-line
+      '(:eval (if (file-remote-p default-directory)
+                  " Projectile"
+                (format " %s" (projectile-project-name)))))
+
+(require 'flycheck)
+(setq flycheck-mode-line '(:eval " FC"))
+
 (diff-hl-flydiff-mode)
 
 (add-to-list 'Info-default-directory-list "~/info")
@@ -58,6 +76,12 @@
 (setq ivy-re-builders-alist
       '((t . ivy--regex-ignore-order)))
 (setq ivy-initial-inputs-alist '())
+
+(setq prelude-flyspell nil)
+
+(toggle-scroll-bar -1)
+
+(load-theme 'solarized-dark)
 
 (server-start)
 

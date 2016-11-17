@@ -1,3 +1,17 @@
+(defun move-to-first-alpha (arg)
+  (interactive "^p")
+  (setq arg (or arg 1))
+  ;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+  (let ((orig-point (point)))
+    (beginning-of-line)
+    (re-search-forward "[a-zA-Z]")
+    (backward-char)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
+
 (defun unpop-to-mark-command ()
   "Unpop off mark ring. Does nothing if mark ring is empty."
   (interactive)
@@ -50,6 +64,33 @@
   (let ((fill-column (point-max)))
     (fill-region beg end)))
 
+(defun first-non-whitespace ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (let ((cur-pt (point))
+          (new-pt (re-search-forward "[^[:space:]]")))
+      (when new-pt
+        (- new-pt cur-pt)))))
+
+(defun end-of-coffee-block ()
+  (interactive)
+  (let ((init-col (first-non-whitespace)))
+    (forward-line)
+    (while (> (first-non-whitespace) init-col)
+      (forward-line)))
+  (forward-line -1)
+  (end-of-line))
+
+(defun up-one-coffee-block ()
+  (interactive)
+  (let ((init-col (first-non-whitespace)))
+    (when (not (= init-col 1))
+      (forward-line -1)
+      (while (>= (first-non-whitespace) init-col)
+        (forward-line -1))))
+  (call-interactively 'crux-move-beginning-of-line))
+
 (defun chomp (str)
   "Chomp leading and tailing whitespace from STR."
   (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
@@ -57,14 +98,17 @@
                             ""
                             str))
 
+(defun yank-and-pop ()
+  (interactive)
+  (call-interactively 'yank)
+  (pop kill-ring))
+
 (setq filter-buffer-substring-function
       (lambda (beg end delete)
         (save-excursion
           (let ((killed-string (chomp (buffer-substring beg end))))
             (when delete (delete-region beg end))
             killed-string))))
-
-
 
 (setq projectile-test-suffix-function
       (lambda (project-type)
@@ -79,5 +123,7 @@
          ((member project-type '(sbt)) "Spec")
          ((member project-type '(clojure)) "-test")
          ((member project-type '(generic)) "_test"))))
+
+
 
 (provide 'navigation)

@@ -8,7 +8,7 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
-(setq org-agenda-files '("~/org/"))
+(setq org-agenda-files '("~/org/" "~/.org-jira/"))
 (eval-after-load "org"
   (lambda ()
     (org-defkey org-mode-map (kbd "RET") 'org-meta-return)
