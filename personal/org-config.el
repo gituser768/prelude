@@ -6,6 +6,8 @@
         ("m" "Misc" entry (file+headline "~/org/gtd.org" "Misc")
          "* TODO %?\n  %i\n  %a")
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")
+        ("r" "Remember this" entry (file+datetree "~/org/remember.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
 (setq org-agenda-files '("~/org/" "~/.org-jira/"))
@@ -33,5 +35,12 @@
 (define-key global-map "\C-cc" 'org-capture)
 
 (add-hook 'org-mode-hook 'org-indent-mode)
+
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries (lambda ()
+                     (org-archive-subtree)
+                     (setq org-map-continue-from (outline-previous-heading)))
+                   "/DONE" 'file))
 
 (provide 'org-config)

@@ -46,7 +46,7 @@
   (if (> arg 0)
       (if (region-active-p)
           (deactivate-mark)
-          (call-interactively 'set-mark-command))
+        (call-interactively 'set-mark-command))
     (unpop-to-mark-command)))
 
 (require 'avy)
@@ -124,6 +124,26 @@
          ((member project-type '(clojure)) "-test")
          ((member project-type '(generic)) "_test"))))
 
+(defun search-for-filename-in-project (filename)
+  (interactive (list (buffer-name)))
+  (helm-projectile-ag)
+  (insert filename))
 
+(defun easy-kill-on-buffer-file-name (n)
+  "Get `buffer-file-name' or `default-directory'.
+If N is zero, remove the directory part; -, remove the file name
+part; +, full path."
+  (if (easy-kill-get mark)
+      (easy-kill-echo "Not supported in `easy-mark'")
+    (pcase (or buffer-file-name default-directory)
+      (`nil (easy-kill-echo "No `buffer-file-name'"))
+      (file (let* ((file (directory-file-name file))
+                   (text (pcase n
+                           (`- (file-name-directory file))
+                           (`0 (file-name-nondirectory file))
+                           (`9 (rng-relative-path file (projectile-project-root)))
+                           (`8 (projectile-project-name))
+                           (_ file))))
+              (easy-kill-adjust-candidate 'buffer-file-name text))))))
 
 (provide 'navigation)

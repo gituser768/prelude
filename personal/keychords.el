@@ -13,7 +13,9 @@
 (key-chord-define-global "zz" 'zop-up-to-char)
 (key-chord-define-global "zb" (lambda (&optional arg)
                                 (interactive "p")
-                                (zop-to-char -1)))
+                                (backward-char)
+                                (zop-up-to-char -1)
+                                (forward-char)))
 
 (key-chord-define-global ",," 'repeat)
 (key-chord-define-global "fv" 'fastnav-sprint-forward)
@@ -36,6 +38,8 @@
                                 (windmove-right)))
 (key-chord-define-global "`5" 'make-frame-command)
 (key-chord-define-global "qk" 'kill-buffer)
+
+(key-chord-define-global ";'" 'helm-escreen-select-escreen)
 
 (key-chord-define-global "lj" nil)
 (key-chord-define-global "yy" nil)

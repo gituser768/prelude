@@ -30,7 +30,6 @@
     (define-key map (kbd "M-m") 'delete-indentation)
     (define-key map (kbd "M-n") 'next-logical-line)
     (define-key map (kbd "M-p") 'previous-logical-line)
-    (define-key map (kbd "C-\\ C-\\") 'escreen-goto-next-screen)
     (define-key map (kbd "s-f") 'swiper)
     (define-key map (kbd "s-p") 'diff-hl-previous-hunk)
     (define-key map (kbd "s-n") 'diff-hl-next-hunk)
@@ -39,9 +38,26 @@
     (define-key map (kbd "s-b") 'up-one-coffee-block)
     (define-key map (kbd "C-M-y") 'yank-and-pop)
     (define-key map (kbd "C-M-i") 'hippie-expand)
+    (define-key map (kbd "C-c p t") 'test-switcher-toggle-between-implementation-and-test)
     map)
   "my-keys-minor-mode keymap.")
 
+(require 'escreen)
+(require 'helm-escreen)
+(define-key escreen-map "n" 'escreen-goto-next-screen)
+(define-key escreen-map (kbd "C-\\") 'escreen-goto-last-screen)
+(define-key escreen-map "c" 'helm-escreen-create-screen)
+(define-key escreen-map "s" 'helm-escreen-select-escreen)
+(define-key escreen-map "k" 'helm-escreen-kill-escreen)
+(define-key escreen-map "r" 'helm-escreen-rename-escreen)
+
+(dumb-jump-mode)
+(define-key dumb-jump-mode-map (kbd "C-M-p") nil)
+(define-key dumb-jump-mode-map (kbd "C-M-g") nil)
+(define-key dumb-jump-mode-map (kbd "C-M-.") 'dumb-jump-go)
+(define-key dumb-jump-mode-map (kbd "C-x 4 C-M-.") 'dumb-jump-go-other-window)
+(define-key dumb-jump-mode-map (kbd "C-M-,") 'dumb-jump-back)
+(define-key dumb-jump-mode-map (kbd "C-M-j") 'dumb-jump-quick-look)
 
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
@@ -120,8 +136,8 @@
 (global-unset-key (kbd "s-e"))
 (global-unset-key (kbd "s-r"))
 
-(global-set-key (kbd "s-e") 'scroll-up-line)
-(define-key prelude-mode-map (kbd "s-r") 'scroll-down-line)
+(global-set-key (kbd "s-e") (lambda () (interactive) (scroll-up-command 3)))
+(define-key prelude-mode-map (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
 
 (global-set-key (kbd "s-`") #'modalka-global-mode)
 

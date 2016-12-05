@@ -1,15 +1,16 @@
 (add-to-list 'load-path "~/.emacs.d/personal")
-(load "navigation.el")
+(load "helpers.el")
 (load "js.el")
-(load "windows.el")
-(load "keychords.el")
-(load "org-config.el")
 (load "keybindings.el")
-(load "magit-config.el")
-(load "yas-conf.el")
-(load "web-config.el")
-(load "term-config.el")
+(load "keychords.el")
 (load "latex-config.el")
+(load "magit-config.el")
+(load "navigation.el")
+(load "org-config.el")
+(load "term-config.el")
+(load "web-config.el")
+(load "windows.el")
+(load "yas-conf.el")
 
 (require 'which-key)
 (require 'modalka)
@@ -28,6 +29,9 @@
 (set-face-attribute 'mode-line nil  :height 150)
 (set-face-attribute 'mode-line-inactive nil  :height 150)
 
+(setq rcirc-fill-column 'window-text-width)
+(setq rcirc-default-nick "monoda")
+
 (define-minor-mode code-review-mode
   (if code-review-mode
       (progn
@@ -38,7 +42,8 @@
       (set-face-attribute 'region nil :background "firebrick"))))
 
 (defun test-file-hook ()
-  (when (string-match-p "test" buffer-file-name)
+  (when (or (string-match-p "test" buffer-file-name)
+            (string-match-p "spec" buffer-file-name))
     (tertestrial-mode)))
 (add-hook 'find-file-hook 'test-file-hook)
 

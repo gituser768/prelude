@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: coro
+# key: coro
+# --
+{coroutine} = Promise = require 'bluebird'
