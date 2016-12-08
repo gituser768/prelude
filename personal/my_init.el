@@ -3,6 +3,7 @@
 (load "js.el")
 (load "keybindings.el")
 (load "keychords.el")
+(load "gnus-config.el")
 (load "latex-config.el")
 (load "magit-config.el")
 (load "navigation.el")
@@ -14,6 +15,7 @@
 
 (require 'which-key)
 (require 'modalka)
+(require 'test-switcher)
 
 (which-key-mode)
 
@@ -25,9 +27,7 @@
 
 (setq hippie-expand-verbose t)
 
-(size-indication-mode -1)
-(set-face-attribute 'mode-line nil  :height 150)
-(set-face-attribute 'mode-line-inactive nil  :height 150)
+(setq cljr-warn-on-eval nil)
 
 (setq rcirc-fill-column 'window-text-width)
 (setq rcirc-default-nick "monoda")
@@ -87,6 +87,10 @@
 (toggle-scroll-bar -1)
 
 (load-theme 'solarized-dark)
+
+(size-indication-mode -1)
+(set-face-attribute 'mode-line nil  :height 150)
+(set-face-attribute 'mode-line-inactive nil  :height 150)
 
 (server-start)
 
