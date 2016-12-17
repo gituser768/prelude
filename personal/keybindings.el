@@ -22,7 +22,7 @@
     (define-key map (kbd "C-M-<backspace>") 'backward-kill-sexp)
     (define-key map (kbd "M-l") 'move-to-window-line-top-bottom)
     (define-key map (kbd "C-<return>") 'move-past-close-and-reindent)
-    (define-key map (kbd "C-c t") 'multi-term)
+    (define-key map (kbd "C-c t") 'term-project-root)
     (define-key map (kbd "C-M-h") 'mark-to-end-of-paragraph)
     (define-key map (kbd "M-)") 'kill-to-end-of-sexp)
     (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
@@ -50,6 +50,7 @@
 (define-key escreen-map "s" 'helm-escreen-select-escreen)
 (define-key escreen-map "k" 'helm-escreen-kill-escreen)
 (define-key escreen-map "r" 'helm-escreen-rename-escreen)
+(define-key escreen-map "w" 'helm-escreen-current-escreen-name)
 
 (dumb-jump-mode)
 (define-key dumb-jump-mode-map (kbd "C-M-p") nil)

@@ -11,13 +11,15 @@
           (lambda ()
             (subword-mode)))
 
-(defun comint-lodash-filter (input)
-  (message (replace-regexp-in-string "_\s*=\s*require\s*'lodash'" "lodash = require 'lodash'" input))
-  (thread-last input
-    (replace-regexp-in-string "_\s*=\s*require\s*'lodash'" "lodash = require 'lodash'")
-    (replace-regexp-in-string "_\\." "lodash.")
-    (replace-regexp-in-string "\\(lodash\.partial.+\\)_" "\\1lodash")
-    (replace-regexp-in-string "^_$" "lodash")))
+;; (defun comint-lodash-filter (input)
+;;   (message (replace-regexp-in-string "_\s*=\s*require\s*'lodash'" "lodash = require 'lodash'" input))
+;;   (thread-last input
+;;     (replace-regexp-in-string "_\s*=\s*require\s*'lodash'" "lodash = require 'lodash'")
+;;     (replace-regexp-in-string "_\\." "lodash.")
+;;     (replace-regexp-in-string "\\(lodash\.partial.+\\)_" "\\1lodash")
+;;     (replace-regexp-in-string "^_$" "lodash")))
+(defun comint-lodash-filter (input) input)
+
 
 (defadvice coffee-send-region (around my-coffee-send-region activate)
   (let (orig-comint-simple-send)

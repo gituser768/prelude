@@ -1,9 +1,19 @@
+(require 'projectile)
+(defun term-project-root ()
+  (interactive)
+  (with-temp-buffer
+    (let* ((dir (projectile-project-root))
+           (multi-term-buffer-name (string-join `(,(projectile-project-name) "term") " "))
+           (default-directory dir))
+      (multi-term))))
+
 (add-hook 'term-mode-hook (lambda () (company-mode -1)))
 
 (global-hl-line-mode)
 (make-variable-buffer-local 'global-hl-line-mode)
 (add-hook 'term-mode-hook (lambda () (setq global-hl-line-mode nil)))
 
+(require 'em-dirs)
 (defun eshell-git-prompt-my-powerline ()
   (let ((segment-separator "\xe0b0")
         (plusminus         "\x00b1")
@@ -67,6 +77,7 @@
 (add-hook 'eshell-mode-hook
           '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-maybe-bol)))
 
+(require 'term)
 (define-key term-raw-map (kbd "C-\\") nil)
 
 (setq etl-box "/sshx:ubuntu@etl.commercialsearching.com:")
