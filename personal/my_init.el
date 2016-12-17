@@ -68,7 +68,7 @@
 
 (add-to-list 'Info-default-directory-list "~/info")
 
-(set-face-attribute 'default nil :height 200)
+(set-face-attribute 'default nil :height 150)
 
 (setq company-tooltip-flip-when-above nil)
 
