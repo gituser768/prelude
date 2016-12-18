@@ -12,6 +12,7 @@
 (load "web-config.el")
 (load "windows.el")
 (load "yas-conf.el")
+(load "stump-config.el")
 
 (require 'which-key)
 (require 'modalka)
@@ -92,6 +93,8 @@
 (set-face-attribute 'mode-line nil  :height 150)
 (set-face-attribute 'mode-line-inactive nil  :height 150)
 
-(server-start)
+(condition-case nil
+    (server-start)
+  (error (server-running-p)))
 
 (provide 'my-init)
