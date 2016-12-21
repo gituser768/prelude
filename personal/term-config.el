@@ -5,7 +5,8 @@
     (let* ((dir (projectile-project-root))
            (multi-term-buffer-name (string-join `(,(projectile-project-name) "term") " "))
            (default-directory dir))
-      (multi-term))))
+      (multi-term)
+      (rename-buffer multi-term-buffer-name))))
 
 (add-hook 'term-mode-hook (lambda () (company-mode -1)))
 
