@@ -13,6 +13,7 @@
 (load "windows.el")
 (load "yas-conf.el")
 (load "stump-config.el")
+(load "os-config.el")
 
 (require 'which-key)
 (require 'modalka)
