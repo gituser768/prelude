@@ -75,6 +75,9 @@
 (setq company-tooltip-flip-when-above nil)
 
 (advice-add 'save-buffer :before 'whitespace-cleanup)
+(advice-add 'delete-window :before
+            (lambda (&optional window)
+              (when (buffer-file-name) (save-buffer))))
 
 (add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode)
 
