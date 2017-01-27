@@ -19,6 +19,8 @@
 (require 'modalka)
 (require 'test-switcher)
 
+(require 'harp-mode)
+
 (which-key-mode)
 
 (setq jiralib-url "https://dmgxteam.atlassian.net")
