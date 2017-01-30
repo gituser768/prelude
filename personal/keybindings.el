@@ -39,8 +39,16 @@
     (define-key map (kbd "C-M-y") 'yank-and-pop)
     (define-key map (kbd "C-M-i") 'hippie-expand)
     (define-key map (kbd "C-c p t") 'test-switcher-toggle-between-implementation-and-test)
+    (define-key map (kbd "C-w") 'better-kill-line)
     map)
   "my-keys-minor-mode keymap.")
+
+(require 'crux)
+(defun better-kill-line (&optional arg)
+  (interactive "p")
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (crux-kill-whole-line arg)))
 
 (require 'escreen)
 (require 'helm-escreen)
