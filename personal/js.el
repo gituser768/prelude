@@ -38,5 +38,12 @@
 
 (advice-add 'coffee-repl :after 'coffee-repl-advice)
 
+(require 'coffee-mode)
+
+(setf coffee-command
+      (cond
+       ((string= system-type "gnu/linux") "/home/dany/coffeescript/bin/coffee")
+       ((string= system-type "darwin") "/Users/dany/Documents/coffeescript/bin/coffee")))
+
 
 (provide 'js)
