@@ -23,6 +23,8 @@
 
 (which-key-mode)
 
+(crux-reopen-as-root)
+
 (setq jiralib-url "https://dmgxteam.atlassian.net")
 
 (rainbow-delimiters-mode)
