@@ -23,8 +23,6 @@
 
 (which-key-mode)
 
-(crux-reopen-as-root)
-
 (setq jiralib-url "https://dmgxteam.atlassian.net")
 
 (rainbow-delimiters-mode)
@@ -52,6 +50,7 @@
             (string-match-p "spec" buffer-file-name))
     (tertestrial-mode)))
 (add-hook 'find-file-hook 'test-file-hook)
+(add-hook 'file-file-hook 'crux-reopen-as-root)
 
 ;; (defun git-clone (repo-path)
 ;;   (interactive "sGit repo: ")
@@ -74,7 +73,9 @@
 
 (add-to-list 'Info-default-directory-list "~/info")
 
-(set-face-attribute 'default nil :height 150)
+(cond
+ ((string= system-type "gnu/linux") (set-face-attribute 'default nil :height 150))
+ ((string= system-type "darwin") (set-face-attribute 'default nil :height 180)))
 
 (setq company-tooltip-flip-when-above nil)
 

@@ -43,7 +43,7 @@
 (setf coffee-command
       (cond
        ((string= system-type "gnu/linux") "/home/dany/coffeescript/bin/coffee")
-       ((string= system-type "darwin") "/Users/dany/Documents/coffeescript/bin/coffee")))
+       ((string= system-type "darwin") "/Users/dany/better-coffeescript-repl/bin/coffee")))
 
 
 (provide 'js)
