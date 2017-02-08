@@ -1,6 +1,6 @@
 (add-hook 'typescript-mode-hook
           (lambda ()
-            (tide-setup)
+            ;;(tide-setup)
             (flycheck-mode +1)
             (setq flycheck-check-syntax-automatically '(save mode-enabled))
             (eldoc-mode +1)
@@ -18,16 +18,16 @@
 ;;     (replace-regexp-in-string "_\\." "lodash.")
 ;;     (replace-regexp-in-string "\\(lodash\.partial.+\\)_" "\\1lodash")
 ;;     (replace-regexp-in-string "^_$" "lodash")))
-(defun comint-lodash-filter (input) input)
+;; (defun comint-lodash-filter (input) input)
 
 
-(defadvice coffee-send-region (around my-coffee-send-region activate)
-  (let (orig-comint-simple-send)
-    (fset 'orig-comint-simple-send (symbol-function 'comint-simple-send))
-    (fset 'comint-simple-send (lambda (proc input) (orig-comint-simple-send proc (comint-lodash-filter input))))
-    (unwind-protect
-        ad-do-it
-      (fset 'comint-simple-send (symbol-function 'orig-comint-simple-send)))))
+;; (defadvice coffee-send-region (around my-coffee-send-region activate)
+;;   (let (orig-comint-simple-send)
+;;     (fset 'orig-comint-simple-send (symbol-function 'comint-simple-send))
+;;     (fset 'comint-simple-send (lambda (proc input) (orig-comint-simple-send proc (comint-lodash-filter input))))
+;;     (unwind-protect
+;;         ad-do-it
+;;       (fset 'comint-simple-send (symbol-function 'orig-comint-simple-send)))))
 
 (defun coffee-repl-advice ()
   (subword-mode)
