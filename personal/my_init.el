@@ -51,6 +51,8 @@
     (tertestrial-mode)))
 (add-hook 'find-file-hook 'test-file-hook)
 (add-hook 'file-file-hook 'crux-reopen-as-root)
+(add-hook 'prog-mode-hook 'paredit-everywhere-mode)
+(add-hook 'prog-mode-hook 'turn-off-smartparens-mode)
 
 ;; (defun git-clone (repo-path)
 ;;   (interactive "sGit repo: ")
