@@ -3,6 +3,8 @@
 
 (require 'paredit-everywhere)
 (define-key paredit-everywhere-mode-map (kbd "M-s") nil)
+(define-key paredit-everywhere-mode-map (kbd "M-)") nil)
+(define-key paredit-everywhere-mode-map (kbd "M-(") nil)
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
