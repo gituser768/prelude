@@ -1,6 +1,9 @@
 (global-unset-key (kbd "M-u"))
 (global-unset-key (kbd "s-a"))
 
+(require 'paredit-everywhere)
+(define-key paredit-everywhere-mode-map (kbd "M-s") nil)
+
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c DEL") 'winner-undo)
@@ -40,6 +43,7 @@
     (define-key map (kbd "C-M-i") 'hippie-expand)
     (define-key map (kbd "C-c p t") 'test-switcher-toggle-between-implementation-and-test)
     (define-key map (kbd "C-w") 'better-kill-line)
+    (define-key map (kbd "M-s") 'sp-splice-sexp)
     map)
   "my-keys-minor-mode keymap.")
 

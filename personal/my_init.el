@@ -27,6 +27,10 @@
 
 (rainbow-delimiters-mode)
 
+;;(face tabs empty trailing lines-tail)
+(setq whitespace-style
+      '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
+
 (setq thesaurus-bhl-api-key "a6f1f7cbef19ca997bc341270494fad2")
 
 (setq hippie-expand-verbose t)
