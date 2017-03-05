@@ -27,6 +27,8 @@
 
 (rainbow-delimiters-mode)
 
+(global-smartscan-mode)
+
 ;;(face tabs empty trailing lines-tail)
 (setq whitespace-style
       '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
