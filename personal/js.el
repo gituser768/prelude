@@ -1,3 +1,9 @@
+(setq-default flycheck-disabled-checkers
+              (append flycheck-disabled-checkers
+                      '(javascript-jshint)))
+
+(flycheck-add-mode 'javascript-eslint 'js2-mode)
+
 (add-hook 'typescript-mode-hook
           (lambda ()
             ;;(tide-setup)

@@ -27,8 +27,6 @@
 
 (rainbow-delimiters-mode)
 
-(global-smartscan-mode)
-
 ;;(face tabs empty trailing lines-tail)
 (setq whitespace-style
       '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
@@ -104,7 +102,8 @@
 
 (toggle-scroll-bar -1)
 
-(load-theme 'solarized-dark)
+;; (load-theme 'solarized-dark)
+(load-theme 'gruvbox)
 
 (size-indication-mode -1)
 (set-face-attribute 'mode-line nil  :height 150)

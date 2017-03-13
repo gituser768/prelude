@@ -6,6 +6,10 @@
 (define-key paredit-everywhere-mode-map (kbd "M-)") nil)
 (define-key paredit-everywhere-mode-map (kbd "M-(") nil)
 
+(require 'ido)
+(define-key ido-common-completion-map (kbd "C-f") 'ido-next-match)
+(define-key ido-common-completion-map (kbd "C-b") 'ido-prev-match)
+
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c DEL") 'winner-undo)
@@ -33,8 +37,6 @@
     (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
     (define-key map (kbd "C-M-q") 'unfill-region)
     (define-key map (kbd "M-m") 'delete-indentation)
-    (define-key map (kbd "M-n") 'next-logical-line)
-    (define-key map (kbd "M-p") 'previous-logical-line)
     (define-key map (kbd "s-f") 'swiper)
     (define-key map (kbd "s-p") 'diff-hl-previous-hunk)
     (define-key map (kbd "s-n") 'diff-hl-next-hunk)
