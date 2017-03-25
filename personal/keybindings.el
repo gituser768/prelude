@@ -1,3 +1,8 @@
+(define-key key-translation-map (kbd "DEL") (kbd "C-h"))
+(define-key key-translation-map (kbd "C-h") (kbd "DEL"))
+(define-key key-translation-map (kbd "C-M-h") (kbd "M-DEL"))
+(define-key key-translation-map (kbd "C-S-M-h") (kbd "C-M-<backspace>"))
+
 (global-unset-key (kbd "M-u"))
 (global-unset-key (kbd "s-a"))
 
