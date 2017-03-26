@@ -53,6 +53,8 @@
     (define-key map (kbd "C-c p t") 'test-switcher-toggle-between-implementation-and-test)
     (define-key map (kbd "C-w") 'better-kill-line)
     (define-key map (kbd "M-s") 'sp-splice-sexp)
+    (define-key map (kbd "C-j") 'previous-line)
+    (define-key map (kbd "C-'") 'er/expand-region)
     map)
   "my-keys-minor-mode keymap.")
 
