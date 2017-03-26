@@ -6,6 +6,11 @@
 (global-unset-key (kbd "M-u"))
 (global-unset-key (kbd "s-a"))
 
+(require 'helm)
+(define-key helm-map (kbd "C-j") 'helm-previous-line)
+(define-key helm-map (kbd "C-<tab>") 'helm-select-action)
+(define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+
 (require 'paredit-everywhere)
 (define-key paredit-everywhere-mode-map (kbd "M-s") nil)
 (define-key paredit-everywhere-mode-map (kbd "M-)") nil)
