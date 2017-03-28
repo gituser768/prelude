@@ -44,7 +44,6 @@
 (key-chord-define-global "uu" 'undo-tree-undo)
 (key-chord-define-global "yy" 'undo-tree-redo)
 (key-chord-define-global "lj" nil)
-(key-chord-define-global "yy" nil)
 
 (provide 'keychords)
 ;;; keychords ends here
