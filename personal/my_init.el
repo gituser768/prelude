@@ -102,6 +102,8 @@
 
 (toggle-scroll-bar -1)
 
+(setf expand-region-fast-keys-enabled nil)
+
 ;; (load-theme 'solarized-dark)
 (load-theme 'gruvbox)
 
