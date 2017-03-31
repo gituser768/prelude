@@ -20,6 +20,15 @@
 (define-key ido-common-completion-map (kbd "C-f") 'ido-next-match)
 (define-key ido-common-completion-map (kbd "C-b") 'ido-prev-match)
 
+(require 'term)
+(define-key term-raw-map (kbd "C-v") 'scroll-up-command)
+(define-key term-raw-map (kbd "M-v") 'scroll-down-command)
+(define-key term-raw-map (kbd "M-f") 'forward-word)
+(define-key term-raw-map (kbd "M-b") 'backward-word)
+(define-key term-raw-map (kbd "C-f") 'forward-char)
+(define-key term-raw-map (kbd "C-b") 'backward-char)
+(define-key term-raw-map (kbd "C-b") 'backward-char)
+
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c DEL") 'winner-undo)
