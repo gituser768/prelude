@@ -105,11 +105,15 @@
 (setf expand-region-fast-keys-enabled nil)
 
 ;; (load-theme 'solarized-dark)
-(load-theme 'gruvbox)
+;; (load-theme 'gruvbox)
+(load-theme 'spacemacs-dark)
+(set-face-attribute 'default t :font "Source Code Pro")
 
 (size-indication-mode -1)
 (set-face-attribute 'mode-line nil  :height 150)
 (set-face-attribute 'mode-line-inactive nil  :height 150)
+
+(setq-default mode-line-format '("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification sml/pos-id-separator mode-line-position evil-mode-line-tag smartrep-mode-line-string sml/pre-modes-separator mode-line-modes mode-line-misc-info (:eval (magit-get-current-branch)) mode-line-end-spaces))
 
 (condition-case nil
     (server-start)
