@@ -228,6 +228,8 @@
 (global-set-key (kbd "C-x C-3") 'split-window-right)
 (global-set-key (kbd "C-x C-0") 'delete-window)
 (define-key god-local-mode-map (kbd "i") 'god-mode-all)
+(define-key god-local-mode-map (kbd "h") 'sp-backward-delete-char)
+
 (require 'god-mode-isearch)
 (define-key isearch-mode-map (kbd "<escape>") 'god-mode-isearch-activate)
 (define-key god-mode-isearch-map (kbd "<escape>") 'god-mode-isearch-disable)
