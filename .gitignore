@@ -22,3 +22,5 @@ session*
 tramp
 /var/pcache
 /vendor/
+.emacs.desktop
+.emacs.desktop.lock
