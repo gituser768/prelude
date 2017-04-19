@@ -147,6 +147,7 @@
 
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
   "Don't allow esc esc esc to destroy other windows"
+  (unless god-global-mode (god-mode-all))
   (let (orig-one-window-p)
     (fset 'orig-one-window-p (symbol-function 'one-window-p))
     (fset 'one-window-p (lambda (&optional nomini all-frames) t))
@@ -226,7 +227,7 @@
 (global-set-key (kbd "C-x C-2") 'split-window-below)
 (global-set-key (kbd "C-x C-3") 'split-window-right)
 (global-set-key (kbd "C-x C-0") 'delete-window)
-(define-key god-local-mode-map (kbd "i") 'god-local-mode)
+(define-key god-local-mode-map (kbd "i") 'god-mode-all)
 (require 'god-mode-isearch)
 (define-key isearch-mode-map (kbd "<escape>") 'god-mode-isearch-activate)
 (define-key god-mode-isearch-map (kbd "<escape>") 'god-mode-isearch-disable)
