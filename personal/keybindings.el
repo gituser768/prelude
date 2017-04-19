@@ -142,8 +142,8 @@
 (global-set-key (kbd "s-y") 'mark-at-end-or-copy-line)
 
 (defun dh-get-relative-path ()
-    (interactive)
-    (insert (file-relative-name (read-string "Absolute Path: "))))
+  (interactive)
+  (insert (file-relative-name (read-string "Absolute Path: "))))
 
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
   "Don't allow esc esc esc to destroy other windows"
@@ -218,5 +218,34 @@
 (define-key prelude-mode-map (kbd "s-l") nil)
 
 (define-key global-map (kbd "C-x C-c") nil)
+
+;; God mode config
+(define-key god-local-mode-map (kbd ".") 'repeat)
+(global-set-key (kbd "C-x C-1") 'delete-other-windows)
+(global-set-key (kbd "C-x C-2") 'split-window-below)
+(global-set-key (kbd "C-x C-3") 'split-window-right)
+(global-set-key (kbd "C-x C-0") 'delete-window)
+(define-key god-local-mode-map (kbd "i") 'god-local-mode)
+(require 'god-mode-isearch)
+(define-key isearch-mode-map (kbd "<escape>") 'god-mode-isearch-activate)
+(define-key god-mode-isearch-map (kbd "<escape>") 'god-mode-isearch-disable)
+
+(defun god-toggle-on-overwrite ()
+  "Toggle god-mode on overwrite-mode."
+  (if (bound-and-true-p overwrite-mode)
+      (god-local-mode-pause)
+    (god-local-mode-resume)))
+
+(defun my-update-cursor ()
+  (if (or god-local-mode buffer-read-only)
+      (set-cursor-color "#3BBBBB")
+    (set-cursor-color "#FFFFEF")))
+
+(add-hook 'god-mode-enabled-hook 'my-update-cursor)
+(add-hook 'god-mode-disabled-hook 'my-update-cursor)
+(add-hook 'overwrite-mode-hook 'god-toggle-on-overwrite)
+
+(add-to-list 'god-exempt-major-modes 'dired-mode)
+(add-to-list 'god-exempt-major-modes 'magit-mode)
 
 (provide 'keybindings)
