@@ -220,6 +220,7 @@
 (define-key global-map (kbd "C-x C-c") nil)
 
 ;; God mode config
+
 (define-key god-local-mode-map (kbd ".") 'repeat)
 (global-set-key (kbd "C-x C-1") 'delete-other-windows)
 (global-set-key (kbd "C-x C-2") 'split-window-below)
@@ -229,6 +230,8 @@
 (require 'god-mode-isearch)
 (define-key isearch-mode-map (kbd "<escape>") 'god-mode-isearch-activate)
 (define-key god-mode-isearch-map (kbd "<escape>") 'god-mode-isearch-disable)
+
+(define-key prelude-mode-map (kbd "s-g") 'god-mode-all)
 
 (add-to-list 'god-exempt-major-modes 'dired-mode)
 (add-to-list 'god-exempt-major-modes 'magit-mode)
