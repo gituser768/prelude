@@ -238,5 +238,6 @@
 
 (add-to-list 'god-exempt-major-modes 'dired-mode)
 (add-to-list 'god-exempt-major-modes 'magit-mode)
+(add-to-list 'god-exempt-major-modes 'term-mode)
 
 (provide 'keybindings)
