@@ -1,3 +1,5 @@
+(require 'god-mode)
+
 (define-key key-translation-map (kbd "C-?") (kbd "C-h"))
 (define-key key-translation-map (kbd "C-h") (kbd "DEL"))
 (define-key key-translation-map (kbd "M-h") (kbd "M-DEL"))
@@ -34,14 +36,14 @@
     (define-key map (kbd "C-c DEL") 'winner-undo)
     (define-key map (kbd "C-x 4 2 f") 'split-horiz-find)
     (define-key map (kbd "C-x 4 3 f") 'split-vert-find)
-    (define-key map (kbd "S-s-j") 'buf-move-left)
-    (define-key map (kbd "S-s-;") 'buf-move-right)
-    (define-key map (kbd "S-s-l") 'buf-move-up)
-    (define-key map (kbd "S-s-k") 'buf-move-down)
-    (define-key map (kbd "s-j") 'windmove-left)
-    (define-key map (kbd "s-;") 'windmove-right)
-    (define-key map (kbd "s-l") 'windmove-up)
-    (define-key map (kbd "s-k") 'windmove-down)
+    (define-key map (kbd "S-s-h") 'buf-move-left)
+    (define-key map (kbd "S-s-l") 'buf-move-right)
+    (define-key map (kbd "S-s-k") 'buf-move-up)
+    (define-key map (kbd "S-s-j") 'buf-move-down)
+    (define-key map (kbd "s-h") 'windmove-left)
+    (define-key map (kbd "s-l") 'windmove-right)
+    (define-key map (kbd "s-k") 'windmove-up)
+    (define-key map (kbd "s-j") 'windmove-down)
     (define-key map (kbd "s-n") 'next-line)
     (define-key map (kbd "s-p") 'previous-line)
     (define-key map (kbd "C-SPC") 'my-set-mark)
@@ -147,7 +149,7 @@
 
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
   "Don't allow esc esc esc to destroy other windows"
-  (unless god-global-mode (god-mode-all))
+  ;;(unless god-global-mode (god-mode-all))
   (let (orig-one-window-p)
     (fset 'orig-one-window-p (symbol-function 'one-window-p))
     (fset 'one-window-p (lambda (&optional nomini all-frames) t))
@@ -221,7 +223,6 @@
 (define-key global-map (kbd "C-x C-c") nil)
 
 ;; God mode config
-
 (define-key god-local-mode-map (kbd ".") 'repeat)
 (global-set-key (kbd "C-x C-1") 'delete-other-windows)
 (global-set-key (kbd "C-x C-2") 'split-window-below)

@@ -18,12 +18,15 @@
 (require 'which-key)
 (require 'modalka)
 (require 'test-switcher)
+(require 'god-mode)
 
 (require 'harp-mode)
 
 (which-key-mode)
 
 (setq jiralib-url "https://dmgxteam.atlassian.net")
+
+(setq enable-recursive-minibuffers t)
 
 (rainbow-delimiters-mode)
 

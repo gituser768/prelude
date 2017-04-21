@@ -15,7 +15,8 @@
 
 (add-hook 'js2-mode-hook
           (lambda ()
-            (subword-mode)))
+            (subword-mode)
+            (js2-mode-hide-warnings-and-errors)))
 
 ;; (defun comint-lodash-filter (input)
 ;;   (message (replace-regexp-in-string "_\s*=\s*require\s*'lodash'" "lodash = require 'lodash'" input))
