@@ -46,7 +46,6 @@
     (define-key map (kbd "s-j") 'windmove-down)
     (define-key map (kbd "s-n") 'next-line)
     (define-key map (kbd "s-p") 'previous-line)
-    (define-key map (kbd "C-SPC") 'my-set-mark)
     (define-key map (kbd "M-:") 'helm-eval-expression-with-eldoc)
     (define-key map (kbd "M-u") 'sp-splice-sexp-killing-backward)
     (define-key map (kbd "C-M-<backspace>") 'backward-kill-sexp)

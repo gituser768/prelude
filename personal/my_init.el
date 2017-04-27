@@ -14,6 +14,7 @@
 (load "yas-conf.el")
 (load "stump-config.el")
 (load "os-config.el")
+(load "cl.el")
 
 (require 'which-key)
 (require 'modalka)
