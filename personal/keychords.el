@@ -18,8 +18,6 @@
                                 (forward-char)))
 
 (key-chord-define-global ",," 'repeat)
-(key-chord-define-global "fv" 'fastnav-sprint-forward)
-(key-chord-define-global "vb" 'fastnav-sprint-backward)
 (key-chord-define-global "zx" 'counsel-M-x)
 (key-chord-define-global "qd" 'dired)
 (key-chord-define-global "wg" 'magit-status)
