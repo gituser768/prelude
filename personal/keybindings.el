@@ -72,6 +72,7 @@
     (define-key map (kbd "M-j") 'mark-paragraph)
     (define-key map (kbd "C-M-j") 'mark-to-end-of-paragraph)
     (define-key map (kbd "s-v") 'end-of-coffee-block)
+    (define-key map (kbd "s-i") 'other-frame)
     map)
   "my-keys-minor-mode keymap.")
 

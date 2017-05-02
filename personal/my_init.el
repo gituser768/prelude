@@ -93,6 +93,9 @@
 (advice-add 'delete-window :before
             (lambda (&optional window)
               (when (buffer-file-name) (save-buffer))))
+(advice-add 'other-frame :before
+            (lambda (&optional window)
+              (when (buffer-file-name) (save-buffer))))
 
 (add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode)
 
@@ -111,7 +114,7 @@
 ;; (load-theme 'solarized-dark)
 ;; (load-theme 'gruvbox)
 (load-theme 'spacemacs-dark)
-(set-face-attribute 'default t :font "Source Code Pro")
+(set-face-attribute 'default nil :font "Source Code Pro")
 
 (size-indication-mode -1)
 (set-face-attribute 'mode-line nil  :height 150)
