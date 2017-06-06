@@ -63,7 +63,12 @@
     (define-key map (kbd "s-b") 'up-one-coffee-block)
     (define-key map (kbd "C-M-y") 'yank-and-pop)
     (define-key map (kbd "C-M-i") 'hippie-expand)
-    (define-key map (kbd "s-t") 'test-switcher-toggle-between-implementation-and-test)
+    (define-key map (kbd "s-t") (lambda ()
+                                  (interactive)
+                                  (if (eq major-mode
+                                          'org-mode)
+                                      (org-todo)
+                                    (test-switcher-toggle-between-implementation-and-test))))
     (define-key map (kbd "C-w") 'better-kill-line)
     (define-key map (kbd "M-s") 'sp-splice-sexp)
     (define-key map (kbd "C-j") 'previous-line)
@@ -89,6 +94,13 @@
     map)
   "my-keys-minor-mode keymap.")
 
+(define-minor-mode my-keys-minor-mode
+  "A minor mode so that my key settings override annoying major modes."
+  :init-value t
+  :lighter "")
+
+(my-keys-minor-mode 1)
+
 (require 'crux)
 (defun better-kill-line (&optional arg)
   (interactive "p")
@@ -113,13 +125,6 @@
 (define-key dumb-jump-mode-map (kbd "C-x 4 C-M-.") 'dumb-jump-go-other-window)
 (define-key dumb-jump-mode-map (kbd "C-M-,") 'dumb-jump-back)
 (define-key dumb-jump-mode-map (kbd "C-M-j") 'dumb-jump-quick-look)
-
-(define-minor-mode my-keys-minor-mode
-  "A minor mode so that my key settings override annoying major modes."
-  :init-value t
-  :lighter "")
-
-(my-keys-minor-mode 1)
 
 (setq indent-rigidly-map
       (let ((map (make-sparse-keymap)))
