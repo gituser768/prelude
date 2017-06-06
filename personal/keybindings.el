@@ -63,7 +63,7 @@
     (define-key map (kbd "s-b") 'up-one-coffee-block)
     (define-key map (kbd "C-M-y") 'yank-and-pop)
     (define-key map (kbd "C-M-i") 'hippie-expand)
-    (define-key map (kbd "C-c p t") 'test-switcher-toggle-between-implementation-and-test)
+    (define-key map (kbd "s-t") 'test-switcher-toggle-between-implementation-and-test)
     (define-key map (kbd "C-w") 'better-kill-line)
     (define-key map (kbd "M-s") 'sp-splice-sexp)
     (define-key map (kbd "C-j") 'previous-line)
@@ -86,7 +86,6 @@
     (define-key map (kbd "s-5") 'make-frame-command)
     (define-key map (kbd "s-<backspace>") 'winner-undo)
     (define-key map (kbd "s-f") 'helm-projectile-find-file)
-    (define-key map (kbd "s-p") 'helm-projectile-switch-project)
     map)
   "my-keys-minor-mode keymap.")
 
