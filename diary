@@ -1,1 +1,1 @@
-&%%(memq (calendar-day-of-week date) '(1 3 4 5)) 9:45am standup
+&%%(memq (calendar-day-of-week date) '(1 2 3 4 5)) 9:45am standup https://hangouts.google.com/hangouts/_/xceligent.com/CS

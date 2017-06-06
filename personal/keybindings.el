@@ -118,7 +118,7 @@
 (define-key escreen-map "r" 'helm-escreen-rename-escreen)
 (define-key escreen-map "w" 'helm-escreen-current-escreen-name)
 
-(dumb-jump-mode)
+(dumb-jump-mode -1)
 (define-key dumb-jump-mode-map (kbd "C-M-p") nil)
 (define-key dumb-jump-mode-map (kbd "C-M-g") nil)
 (define-key dumb-jump-mode-map (kbd "C-M-.") 'dumb-jump-go)
