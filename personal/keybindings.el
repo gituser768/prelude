@@ -91,6 +91,9 @@
     (define-key map (kbd "s-5") 'make-frame-command)
     (define-key map (kbd "s-<backspace>") 'winner-undo)
     (define-key map (kbd "s-f") 'helm-projectile-find-file)
+    (define-key map (kbd "<f9> c") 'calendar)
+    (define-key map (kbd "<f9> o") 'dh-make-org-scratch)
+    (define-key map (kbd "<f9> n") 'org-narrow-to-subtree)
     map)
   "my-keys-minor-mode keymap.")
 
@@ -107,6 +110,11 @@
   (if mark-active
       (kill-region (region-beginning) (region-end))
     (crux-kill-whole-line arg)))
+
+(defun dh-make-org-scratch ()
+  (interactive)
+  (crux-create-scratch-buffer)
+  (org-mode))
 
 (require 'escreen)
 (require 'helm-escreen)

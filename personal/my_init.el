@@ -60,7 +60,6 @@
 (add-hook 'find-file-hook 'test-file-hook)
 (add-hook 'file-file-hook 'crux-reopen-as-root)
 (add-hook 'prelude-prog-mode-hook 'paredit-everywhere-mode t)
-(add-hook 'prelude-prog-mode-hook 'turn-off-smartparens-mode t)
 
 ;; (defun git-clone (repo-path)
 ;;   (interactive "sGit repo: ")
