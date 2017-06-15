@@ -208,63 +208,11 @@
 (global-set-key (kbd "s-e") (lambda () (interactive) (scroll-up-command 3)))
 (define-key prelude-mode-map (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
 
-(global-set-key (kbd "s-`") #'modalka-global-mode)
-
-;;; Modalka Mode
-(add-hook 'modalka-global-mode-hook
-          (lambda ()
-            (if modalka-global-mode
-                (progn
-                  (set-cursor-color "#3BBBBB"))
-              (progn
-                (set-cursor-color "#FFFFEF")))))
-
-(modalka-remove-kbd "h")
-(modalka-remove-kbd "j")
-(modalka-remove-kbd "k")
-(modalka-remove-kbd "l")
-
-(modalka-define-kbd "h" "C-b")
-(modalka-define-kbd "j" "C-n")
-(modalka-define-kbd "k" "C-p")
-(modalka-define-kbd "l" "C-f")
-
-(modalka-define-kbd "M-h" "M-b")
-(modalka-define-kbd "M-j" "M-e")
-(modalka-define-kbd "M-k" "M-a")
-(modalka-define-kbd "M-l" "M-f")
-
-(modalka-define-kbd "s-h" "s-<left>")
-(modalka-define-kbd "s-j" "s-<down>")
-(modalka-define-kbd "s-k" "s-<up>")
-(modalka-define-kbd "s-l" "s-<right>")
-
-(setq modalka-cursor-type 'box)
-
 (define-key prelude-mode-map (kbd "s-h") nil)
 (define-key prelude-mode-map (kbd "s-j") nil)
 (define-key prelude-mode-map (kbd "s-k") nil)
 (define-key prelude-mode-map (kbd "s-l") nil)
 
 (define-key global-map (kbd "C-x C-c") nil)
-
-;; God mode config
-(define-key god-local-mode-map (kbd ".") 'repeat)
-(global-set-key (kbd "C-x C-1") 'delete-other-windows)
-(global-set-key (kbd "C-x C-2") 'split-window-below)
-(global-set-key (kbd "C-x C-3") 'split-window-right)
-(global-set-key (kbd "C-x C-0") 'delete-window)
-(define-key god-local-mode-map (kbd "i") 'god-mode-all)
-(define-key god-local-mode-map (kbd "h") 'sp-backward-delete-char)
-
-(require 'god-mode-isearch)
-(define-key isearch-mode-map (kbd "<escape>") 'god-mode-isearch-activate)
-(define-key god-mode-isearch-map (kbd "<escape>") 'god-mode-isearch-disable)
-
-(define-key prelude-mode-map (kbd "s-g") 'god-mode-all)
-
-(add-to-list 'god-exempt-major-modes 'dired-mode)
-(add-to-list 'god-exempt-major-modes 'magit-mode)
-(add-to-list 'god-exempt-major-modes 'term-mode)
 
 (provide 'keybindings)

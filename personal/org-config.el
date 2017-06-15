@@ -1,6 +1,10 @@
+(setf appt-display-interval 5)
+
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
          "* TODO %?\n  %i\n  %a")
+        ("c" "Clocked Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+         "* TODO %?\n  %i\n  %a" :clock-in t)
         ("e" "Emacs Idea" entry (file+headline "~/org/gtd.org" "Emacs Ideas")
          "* TODO %?\n  %i\n  %a")
         ("m" "Misc" entry (file+headline "~/org/gtd.org" "Misc")

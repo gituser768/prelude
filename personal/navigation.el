@@ -110,25 +110,6 @@
             (when delete (delete-region beg end))
             killed-string))))
 
-(setq projectile-test-suffix-function
-      (lambda (project-type)
-        (cond
-         ((member project-type '(rebar)) "_SUITE")
-         ((member project-type '(emacs-cask)) "-test")
-         ((member project-type '(rails-rspec ruby-rspec)) "_spec")
-         ((member project-type '(rails-test ruby-test lein-test boot-clj go elixir)) "_test")
-         ((member project-type '(scons)) "test")
-         ((member project-type '(maven symfony)) "Test")
-         ((member project-type '(gradle gradlew grails)) "Spec")
-         ((member project-type '(sbt)) "Spec")
-         ((member project-type '(clojure)) "-test")
-         ((member project-type '(generic)) "_test"))))
-
-(defun search-for-filename-in-project (filename)
-  (interactive (list (buffer-name)))
-  (helm-projectile-ag)
-  (insert filename))
-
 (defun easy-kill-on-buffer-file-name (n)
   "Get `buffer-file-name' or `default-directory'.
 If N is zero, remove the directory part; -, remove the file name

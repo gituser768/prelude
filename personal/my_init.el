@@ -20,34 +20,27 @@
 (require 'modalka)
 (require 'test-switcher)
 (require 'god-mode)
-
 (require 'harp-mode)
 
 (which-key-mode)
-
-(setq jiralib-url "https://dmgxteam.atlassian.net")
-
 (setq enable-recursive-minibuffers t)
-
 (rainbow-delimiters-mode)
-
-;;(face tabs empty trailing lines-tail)
 (setq whitespace-style
       '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
-
-(setq thesaurus-bhl-api-key "a6f1f7cbef19ca997bc341270494fad2")
-
 (setq hippie-expand-verbose t)
 
-(setq cljr-warn-on-eval nil)
-
-(setq rcirc-fill-column 'window-text-width)
-(setq rcirc-default-nick "monoda")
+(remove-hook 'after-save-hook
+             (lambda ()
+               (when (and
+                      (string-prefix-p prelude-dir (file-truename buffer-file-name))
+                      (file-exists-p (byte-compile-dest-file buffer-file-name)))
+                 (emacs-lisp-byte-compile)))
+             t)
 
 (define-minor-mode code-review-mode
   (if code-review-mode
       (progn
-        (set-face-attribute 'region nil :background "#2B2B2B")
+        (set-face-attribute 'region nil :background "#444155")
         (text-scale-decrease 2))
     (progn
       (text-scale-increase 2)
@@ -59,15 +52,9 @@
     (tertestrial-mode)))
 (add-hook 'find-file-hook 'test-file-hook)
 (add-hook 'file-file-hook 'crux-reopen-as-root)
-(add-hook 'prelude-prog-mode-hook 'paredit-everywhere-mode t)
-
-;; (defun git-clone (repo-path)
-;;   (interactive "sGit repo: ")
-;;   (async-shell-command (concat "git clone " repo-path "/Users/dany/Documents/")))
+;;(add-hook 'prelude-prog-mode-hook 'paredit-everywhere-mode t)
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
-
-(setq semanticdb-global-mode t)
 
 (require 'projectile)
 (setq projectile-mode-line
@@ -79,8 +66,6 @@
 (setq flycheck-mode-line '(:eval " FC"))
 
 (diff-hl-flydiff-mode)
-
-(add-to-list 'Info-default-directory-list "~/info")
 
 (cond
  ((string= system-type "gnu/linux") (set-face-attribute 'default nil :height 150))
@@ -116,8 +101,6 @@
 
 (setf expand-region-fast-keys-enabled nil)
 
-;; (load-theme 'solarized-dark)
-;; (load-theme 'gruvbox)
 (load-theme 'spacemacs-dark)
 (set-face-attribute 'default nil :font "Source Code Pro")
 

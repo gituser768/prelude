@@ -81,14 +81,6 @@
 (require 'term)
 (define-key term-raw-map (kbd "C-\\") nil)
 
-(setq etl-box "/sshx:ubuntu@etl.commercialsearching.com:")
-
-(defun in-buffer (name body)
-  (progn
-     (get-buffer-create name)
-     (switch-to-buffer name)
-     (insert (s-join "\n" body))))
-
 (require 'multi-term)
 (setq multi-term-program "/bin/zsh")
 
