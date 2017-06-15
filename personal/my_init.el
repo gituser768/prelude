@@ -1,4 +1,5 @@
 (add-to-list 'load-path "~/.emacs.d/personal")
+(require 'use-package)
 (load "helpers.el")
 (load "js.el")
 (load "keybindings.el")
@@ -16,7 +17,7 @@
 (load "os-config.el")
 (load "cl.el")
 
-(require 'use-package)
+(setq use-package-always-ensure t)
 
 (use-package which-key
   :config (which-key-mode))
@@ -129,7 +130,8 @@
 
 
 ;;; Visual
-(load-theme 'spacemacs-dark)
+(use-package spacemacs-theme
+  :config (load-theme 'spacemacs-dark))
 (set-face-attribute 'default nil :font "Source Code Pro")
 
 (size-indication-mode -1)

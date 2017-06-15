@@ -1,13 +1,12 @@
 (use-package key-chord
   :init
-  (use-package helm-buffers)
-  (use-package helm-imenu)
+  (use-package helm)
   (use-package helm-projectile)
   (use-package zop-to-char)
   (use-package counsel)
   (use-package magit)
-  (use-package wind-move)
-  (use-package helm-escreen)
+  (use-package windmove)
+  (use-package helm-escreen :load-path "../vendor/helm-escreen/")
   (use-package undo-tree)
   :config
   (key-chord-mode 1)
