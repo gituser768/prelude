@@ -21,6 +21,9 @@
               (js2-mode-hide-warnings-and-errors))))
 
 (use-package coffee-mode
+  :bind (:map coffee-mode-map
+              ("C-c C-c r" . coffee-compile-region)
+              ("C-c C-c b" . coffee-compile-buffer))
   :config
   (setf coffee-command
         (cond

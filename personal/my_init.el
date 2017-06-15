@@ -18,9 +18,6 @@
 
 (require 'use-package)
 
-(require 'test-switcher)
-(require 'harp-mode)
-
 (use-package which-key
   :config (which-key-mode))
 
@@ -36,23 +33,23 @@
 (use-package hippie-exp
   :config (setf hippie-expand-verbose t))
 
-(use-package tertestrial
-  :load-path "../vendor/"
+(use-package emacs-tertestrial
+  :load-path "../vendor/emacs-tertestrial/"
   :config
-  (add-hook 'find-file-hook 'test-file-hook)
-  (defun test-file-hook ()
-    (when (or (string-match-p "test" buffer-file-name)
-              (string-match-p "spec" buffer-file-name))
-      (tertestrial-mode))))
+  (add-hook 'find-file-hook 'test-file-hook))
+(defun test-file-hook ()
+  (when (or (string-match-p "test" buffer-file-name)
+            (string-match-p "spec" buffer-file-name))
+    (tertestrial-mode)))
 
 (use-package crux
   :config
-  (add-hook 'file-file-hook 'crux-reopen-as-root)
-  (defun better-kill-line (&optional arg)
-    (interactive "p")
-    (if mark-active
-        (kill-region (region-beginning) (region-end))
-      (crux-kill-whole-line arg))))
+  (add-hook 'file-file-hook 'crux-reopen-as-root))
+(defun better-kill-line (&optional arg)
+  (interactive "p")
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (crux-kill-whole-line arg)))
 
 (use-package projectile
   :config
@@ -67,15 +64,21 @@
 
 (use-package flycheck
   :config
-  (setf flycheck-mode-line '(:eval " FC"))
+  (setq flycheck-mode-line '(:eval " FC"))
   (setq-default flycheck-disabled-checkers
-                (add-to-list flycheck-disabled-checkers 'javascript-jshint))
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint)))
   (flycheck-add-mode 'javascript-eslint 'js2-mode))
 
 (use-package diff-hl-flydiff
   :config (diff-hl-flydiff-mode))
 
 (use-package company
+  :bind (:map company-active-map
+              ("<escape>" . company-abort)
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("<tab>" . company-complete-common-or-cycle))
   :config (setf company-tooltip-flip-when-above nil))
 
 (use-package smartparens
@@ -106,6 +109,9 @@
 
 
 ;;; Base Emacs config
+(global-hl-line-mode)
+(make-variable-buffer-local 'global-hl-line-mode)
+
 (setq enable-recursive-minibuffers t)
 
 (advice-add 'delete-window :before

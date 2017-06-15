@@ -110,6 +110,8 @@
             (when delete (delete-region beg end))
             killed-string))))
 
+(use-package easy-kill)
+
 (defun easy-kill-on-buffer-file-name (n)
   "Get `buffer-file-name' or `default-directory'.
 If N is zero, remove the directory part; -, remove the file name

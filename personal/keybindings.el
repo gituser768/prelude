@@ -23,15 +23,19 @@
               ("C-f" . ido-next-match)
               ("C-b" . ido-prev-match)))
 
-(use-package term
-  :bind (:map term-raw-map
-              ("C-v" . scroll-up-command)
-              ("M-v" . scroll-down-command)
-              ("M-f" . forward-word)
-              ("M-b" . backward-word)
-              ("C-f" . forward-char)
-              ("C-b" . backward-char)
-              ("C-b" . backward-char)))
+(use-package winner)
+(use-package windmove)
+(use-package helm-eval)
+(use-package smart-parens)
+(use-package term-config)
+(use-package navigation)
+(use-package swiper)
+(use-package diff-hl)
+(use-package hippie-exp)
+(use-package org)
+(use-package test-switcher
+  :load-path "../vendor/test-switcher/")
+(use-package expand-region)
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -111,15 +115,17 @@
   (crux-create-scratch-buffer)
   (org-mode))
 
-(require 'escreen)
-(require 'helm-escreen)
-(define-key escreen-map "n" 'escreen-goto-next-screen)
-(define-key escreen-map (kbd "C-\\") 'escreen-goto-last-screen)
-(define-key escreen-map "c" 'helm-escreen-create-screen)
-(define-key escreen-map "s" 'helm-escreen-select-escreen)
-(define-key escreen-map "k" 'helm-escreen-kill-escreen)
-(define-key escreen-map "r" 'helm-escreen-rename-escreen)
-(define-key escreen-map "w" 'helm-escreen-current-escreen-name)
+(use-package helm-escreen
+  :init
+  (use-package escreen
+    :bind (:map escreen-map
+                ("n" . escreen-goto-next-screen)
+                ("C-\\" . escreen-goto-last-screen)
+                ("c" . helm-escreen-create-screen)
+                ("s" . helm-escreen-select-escreen)
+                ("k" . helm-escreen-kill-escreen)
+                ("r" . helm-escreen-rename-escreen)
+                ("w" . helm-escreen-current-escreen-name))))
 
 (setq indent-rigidly-map
       (let ((map (make-sparse-keymap)))
@@ -171,33 +177,19 @@
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-(require 'coffee-mode)
-(define-key coffee-mode-map (kbd "C-c C-c r") 'coffee-compile-region)
-(define-key coffee-mode-map (kbd "C-c C-c b") 'coffee-compile-buffer)
-
 (define-key dired-mode-map (kbd "TAB") 'dired-subtree-toggle)
 
-(define-key company-active-map (kbd "<escape>") 'company-abort)
-(define-key company-active-map (kbd "C-n") 'company-select-next)
-(define-key company-active-map (kbd "C-p") 'company-select-previous)
-(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-
-(require 'helm-ag)
-
-(define-key helm-ag-mode-map (kbd "n") 'next-logical-line)
-(define-key helm-ag-mode-map (kbd "p") 'previous-logical-line)
-(define-key helm-ag-mode-map (kbd "o") 'helm-ag-mode-jump-other-window)
+(use-package helm-ag
+  :bind (:map helm-ag-mode-map
+              ("n" . next-logical-line)
+              ("p" . previous-logical-line)
+              ("o" . helm-ag-mode-jump-other-window)))
 
 (global-unset-key (kbd "s-e"))
 (global-unset-key (kbd "s-r"))
 
 (global-set-key (kbd "s-e") (lambda () (interactive) (scroll-up-command 3)))
-(define-key prelude-mode-map (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
-
-(define-key prelude-mode-map (kbd "s-h") nil)
-(define-key prelude-mode-map (kbd "s-j") nil)
-(define-key prelude-mode-map (kbd "s-k") nil)
-(define-key prelude-mode-map (kbd "s-l") nil)
+(global-set-key (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
 
 (define-key global-map (kbd "C-x C-c") nil)
 
