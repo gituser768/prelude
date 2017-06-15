@@ -1,5 +1,3 @@
-(require 'god-mode)
-
 (define-key key-translation-map (kbd "C-?") (kbd "C-h"))
 (define-key key-translation-map (kbd "C-h") (kbd "DEL"))
 (define-key key-translation-map (kbd "M-h") (kbd "M-DEL"))
@@ -8,28 +6,32 @@
 (global-unset-key (kbd "M-u"))
 (global-unset-key (kbd "s-a"))
 
-(require 'helm)
-(define-key helm-map (kbd "C-j") 'helm-previous-line)
-(define-key helm-map (kbd "C-<tab>") 'helm-select-action)
-(define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+(use-package helm
+  :bind (:map helm-map
+              ("C-j" . helm-previous-line)
+              ("C-<tab>" . helm-select-action)
+              ("TAB" . helm-execute-persistent-action)))
 
-(require 'paredit-everywhere)
-(define-key paredit-everywhere-mode-map (kbd "M-s") nil)
-(define-key paredit-everywhere-mode-map (kbd "M-)") nil)
-(define-key paredit-everywhere-mode-map (kbd "M-(") nil)
 
-(require 'ido)
-(define-key ido-common-completion-map (kbd "C-f") 'ido-next-match)
-(define-key ido-common-completion-map (kbd "C-b") 'ido-prev-match)
+;; (require 'paredit-everywhere)
+;; (define-key paredit-everywhere-mode-map (kbd "M-s") nil)
+;; (define-key paredit-everywhere-mode-map (kbd "M-)") nil)
+;; (define-key paredit-everywhere-mode-map (kbd "M-(") nil)
 
-(require 'term)
-(define-key term-raw-map (kbd "C-v") 'scroll-up-command)
-(define-key term-raw-map (kbd "M-v") 'scroll-down-command)
-(define-key term-raw-map (kbd "M-f") 'forward-word)
-(define-key term-raw-map (kbd "M-b") 'backward-word)
-(define-key term-raw-map (kbd "C-f") 'forward-char)
-(define-key term-raw-map (kbd "C-b") 'backward-char)
-(define-key term-raw-map (kbd "C-b") 'backward-char)
+(use-package ido
+  :bind (:map ido-common-completion-map
+              ("C-f" . ido-next-match)
+              ("C-b" . ido-prev-match)))
+
+(use-package term
+  :bind (:map term-raw-map
+              ("C-v" . scroll-up-command)
+              ("M-v" . scroll-down-command)
+              ("M-f" . forward-word)
+              ("M-b" . backward-word)
+              ("C-f" . forward-char)
+              ("C-b" . backward-char)
+              ("C-b" . backward-char)))
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -104,13 +106,6 @@
 
 (my-keys-minor-mode 1)
 
-(require 'crux)
-(defun better-kill-line (&optional arg)
-  (interactive "p")
-  (if mark-active
-      (kill-region (region-beginning) (region-end))
-    (crux-kill-whole-line arg)))
-
 (defun dh-make-org-scratch ()
   (interactive)
   (crux-create-scratch-buffer)
@@ -125,14 +120,6 @@
 (define-key escreen-map "k" 'helm-escreen-kill-escreen)
 (define-key escreen-map "r" 'helm-escreen-rename-escreen)
 (define-key escreen-map "w" 'helm-escreen-current-escreen-name)
-
-(dumb-jump-mode -1)
-(define-key dumb-jump-mode-map (kbd "C-M-p") nil)
-(define-key dumb-jump-mode-map (kbd "C-M-g") nil)
-(define-key dumb-jump-mode-map (kbd "C-M-.") 'dumb-jump-go)
-(define-key dumb-jump-mode-map (kbd "C-x 4 C-M-.") 'dumb-jump-go-other-window)
-(define-key dumb-jump-mode-map (kbd "C-M-,") 'dumb-jump-back)
-(define-key dumb-jump-mode-map (kbd "C-M-j") 'dumb-jump-quick-look)
 
 (setq indent-rigidly-map
       (let ((map (make-sparse-keymap)))
@@ -175,7 +162,6 @@
 
 (defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
   "Don't allow esc esc esc to destroy other windows"
-  ;;(unless god-global-mode (god-mode-all))
   (let (orig-one-window-p)
     (fset 'orig-one-window-p (symbol-function 'one-window-p))
     (fset 'one-window-p (lambda (&optional nomini all-frames) t))

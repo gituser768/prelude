@@ -16,102 +16,123 @@
 (load "os-config.el")
 (load "cl.el")
 
-(require 'which-key)
-(require 'modalka)
+(require 'use-package)
+
 (require 'test-switcher)
-(require 'god-mode)
 (require 'harp-mode)
 
-(which-key-mode)
+(use-package which-key
+  :config (which-key-mode))
+
+(use-package rainbow-delimiters
+  :config (rainbow-delimiters-mode))
+
+(use-package whitespace
+  :config
+  (setq whitespace-style
+        '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
+  (advice-add 'save-buffer :before 'whitespace-cleanup))
+
+(use-package hippie-exp
+  :config (setf hippie-expand-verbose t))
+
+(use-package tertestrial
+  :load-path "../vendor/"
+  :config
+  (add-hook 'find-file-hook 'test-file-hook)
+  (defun test-file-hook ()
+    (when (or (string-match-p "test" buffer-file-name)
+              (string-match-p "spec" buffer-file-name))
+      (tertestrial-mode))))
+
+(use-package crux
+  :config
+  (add-hook 'file-file-hook 'crux-reopen-as-root)
+  (defun better-kill-line (&optional arg)
+    (interactive "p")
+    (if mark-active
+        (kill-region (region-beginning) (region-end))
+      (crux-kill-whole-line arg))))
+
+(use-package projectile
+  :config
+  (setf projectile-mode-line
+        '(:eval (if (file-remote-p default-directory)
+                    " Projectile"
+                  (format " %s" (projectile-project-name))))))
+
+(use-package cider
+  :config
+  (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))"))
+
+(use-package flycheck
+  :config
+  (setf flycheck-mode-line '(:eval " FC"))
+  (setq-default flycheck-disabled-checkers
+                (add-to-list flycheck-disabled-checkers 'javascript-jshint))
+  (flycheck-add-mode 'javascript-eslint 'js2-mode))
+
+(use-package diff-hl-flydiff
+  :config (diff-hl-flydiff-mode))
+
+(use-package company
+  :config (setf company-tooltip-flip-when-above nil))
+
+(use-package smartparens
+  :init (use-package comint)
+  :config (add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode))
+
+(use-package ivy
+  :config
+  (setq ivy-re-builders-alist
+        '((t . ivy--regex-ignore-order)))
+  (setq ivy-initial-inputs-alist '()))
+
+(use-package expand-region
+  :config (setf expand-region-fast-keys-enabled nil))
+
+;; ;;; Prelude undo configs
+;; (remove-hook 'after-save-hook
+;;              (lambda ()
+;;                (when (and
+;;                       (string-prefix-p prelude-dir (file-truename buffer-file-name))
+;;                       (file-exists-p (byte-compile-dest-file buffer-file-name)))
+;;                  (emacs-lisp-byte-compile)))
+;;              t)
+
+;; (beacon-mode -1)
+
+;; (setq prelude-flyspell nil)
+
+
+;;; Base Emacs config
 (setq enable-recursive-minibuffers t)
-(rainbow-delimiters-mode)
-(setq whitespace-style
-      '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab))
-(setq hippie-expand-verbose t)
 
-(remove-hook 'after-save-hook
-             (lambda ()
-               (when (and
-                      (string-prefix-p prelude-dir (file-truename buffer-file-name))
-                      (file-exists-p (byte-compile-dest-file buffer-file-name)))
-                 (emacs-lisp-byte-compile)))
-             t)
-
-(define-minor-mode code-review-mode
-  (if code-review-mode
-      (progn
-        (set-face-attribute 'region nil :background "#444155")
-        (text-scale-decrease 2))
-    (progn
-      (text-scale-increase 2)
-      (set-face-attribute 'region nil :background "firebrick"))))
-
-(defun test-file-hook ()
-  (when (or (string-match-p "test" buffer-file-name)
-            (string-match-p "spec" buffer-file-name))
-    (tertestrial-mode)))
-(add-hook 'find-file-hook 'test-file-hook)
-(add-hook 'file-file-hook 'crux-reopen-as-root)
-;;(add-hook 'prelude-prog-mode-hook 'paredit-everywhere-mode t)
-
-(setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
-
-(require 'projectile)
-(setq projectile-mode-line
-      '(:eval (if (file-remote-p default-directory)
-                  " Projectile"
-                (format " %s" (projectile-project-name)))))
-
-(require 'flycheck)
-(setq flycheck-mode-line '(:eval " FC"))
-
-(diff-hl-flydiff-mode)
-
-(cond
- ((string= system-type "gnu/linux") (set-face-attribute 'default nil :height 150))
- ((string= system-type "darwin") (set-face-attribute 'default nil :height 180)))
-
-(setq company-tooltip-flip-when-above nil)
-
-(advice-add 'save-buffer :before 'whitespace-cleanup)
 (advice-add 'delete-window :before
             (lambda (&optional window)
               (when (buffer-file-name) (save-buffer))))
 (advice-add 'other-frame :before
             (lambda (&optional window)
               (when (buffer-file-name) (save-buffer))))
-
-(add-hook 'comint-mode-hook 'turn-off-show-smartparens-mode)
-
-(beacon-mode -1)
-
-(setq ivy-re-builders-alist
-      '((t . ivy--regex-ignore-order)))
-(setq ivy-initial-inputs-alist '())
-
-(setq prelude-flyspell nil)
-
+(toggle-scroll-bar -1)
 (add-hook 'after-make-frame-functions
           '(lambda (frame)
              (modify-frame-parameters frame
                                       '((vertical-scroll-bars . nil)
                                         (horizontal-scroll-bars . nil)))))
 
-(toggle-scroll-bar -1)
 
-(setf expand-region-fast-keys-enabled nil)
-
+;;; Visual
 (load-theme 'spacemacs-dark)
 (set-face-attribute 'default nil :font "Source Code Pro")
 
 (size-indication-mode -1)
-(set-face-attribute 'mode-line nil  :height 150)
-(set-face-attribute 'mode-line-inactive nil  :height 150)
 
 (setq-default mode-line-format '("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification sml/pos-id-separator mode-line-position evil-mode-line-tag smartrep-mode-line-string sml/pre-modes-separator mode-line-modes mode-line-misc-info (:eval (magit-get-current-branch)) mode-line-end-spaces))
 
 (condition-case nil
     (server-start)
   (error (server-running-p)))
+
 
 (provide 'my-init)
