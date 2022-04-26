@@ -1,0 +1,6 @@
+[submodule "vendor/helm-escreen"]
+	path = vendor/helm-escreen
+	url = git@github.com:dmh43/helm-escreen.git
+[submodule "vendor/emacs-tertestrial"]
+	path = vendor/emacs-tertestrial
+	url = git@github.com:dmh43/emacs-tertestrial.git
