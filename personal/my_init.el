@@ -10,7 +10,8 @@
               tramp-file-name-regexp))
 (setq tramp-verbose 1)
 (setq vc-handled-backends '(Git))
-
+(require 'diff-hl)
+(diff-hl-margin-mode)
 
 (setq my-org-path "~/org/")
 
