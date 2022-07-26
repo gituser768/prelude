@@ -4,12 +4,13 @@
 
 ;; (exec-path-from-shell-copy-env "ANACONDA_HOME")
 (require 'conda)
-(setq-default conda-project-env-path "/Users/dany.haddad/miniconda3/envs/")
+(setq-default conda-project-env-path "/home/dany.haddad/miniconda3/envs/")
+(setq-default conda-env-home-directory "/home/dany.haddad/miniconda3/")
 (conda-env-autoactivate-mode -1)
 (conda-env-initialize-interactive-shells)
 (conda-env-initialize-eshell)
 (custom-set-variables
- '(conda-anaconda-home "/Users/dany.haddad/miniconda3/"))
+ '(conda-anaconda-home "/home/dany.haddad/miniconda3/"))
 
 (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
 
