@@ -24,23 +24,14 @@
 
 (add-to-list 'load-path "~/.emacs.d/personal")
 (load "helpers.el")
-(load "js-config.el")
 (load "keybindings.el")
 (load "keychords.el")
-                                        ;(load "gnus-config.el")
-(load "latex-config.el")
 (load "magit-config.el")
 (load "navigation.el")
 (load "term-config.el")
-(load "web-config.el")
-(load "windows.el")
 (load "yas-conf.el")
-(load "stump-config.el")
 (load "org-config.el")
 (load "os-config.el")
-;; (load "cl-config.el")
-;; (load "my-secrets.el")
-;; (load "ocaml-config.el")
 (load "octave-config.el")
 (load "cuda-config.el")
 (load "python-config.el")
@@ -131,7 +122,7 @@
 (ws-butler-global-mode)
 (add-to-list 'ws-butler-global-exempt-modes 'org-mode)
 
-(advice-add 'delete-window :before 
+(advice-add 'delete-window :before
             (lambda (&optional window) (super-save-command-advice)))
 (advice-add 'select-window :before
             (lambda (window &optional norecord) (super-save-command-advice)))
