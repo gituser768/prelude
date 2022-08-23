@@ -1,6 +1,6 @@
 ;;; prelude-ivy.el --- Ivy setup
 ;;
-;; Copyright © 2011-2021 Bozhidar Batsov
+;; Copyright © 2011-2022 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/prelude
@@ -70,6 +70,7 @@
 (global-set-key (kbd "C-c j") 'counsel-git-grep)
 (global-set-key (kbd "C-c a") 'counsel-ag)
 (global-set-key (kbd "C-x l") 'counsel-locate)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
 (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 
 (provide 'prelude-ivy)

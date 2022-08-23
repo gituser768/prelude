@@ -1,14 +1,12 @@
-;;; prelude-erlang.el --- Emacs Prelude: Erlang programming support.
+;;; prelude-fsharp.el --- Emacs Prelude: F# programming support.
 ;;
-;; Copyright © 2011-2022 Gleb Peregud
-;;
-;; Author: Gleb Peregud <gleber.p@gmail.com>
+;; Author: Andre Boechat <andre.boechat@tutanota.com>
 
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
 
-;; Erlang is a concurrent functional language.
+;; Basic setup for F# programming based on fsharp-mode and Eglot.
 
 ;;; License:
 
@@ -30,28 +28,21 @@
 ;;; Code:
 
 (require 'prelude-programming)
-(prelude-require-packages '(erlang))
+(prelude-require-packages '(fsharp-mode eglot-fsharp))
 
-(defcustom wrangler-path nil
-  "The location of wrangler elisp directory."
-  :group 'prelude-erlang
-  :type 'string
-  :safe 'stringp)
+(with-eval-after-load 'fsharp-mode
+  (defun prelude-fsharp-mode-defaults ()
+    ;; A reasonable default path to the F# compiler and interpreter on
+    ;; Unix-like systems.
+    ;; https://github.com/fsharp/emacs-fsharp-mode#compiler-and-repl-paths
+    (setq inferior-fsharp-program "dotnet fsi --readline-")
+    (require 'eglot-sharp))
 
-(require 'projectile)
+  (setq prelude-fsharp-mode-hook 'prelude-fsharp-mode-defaults)
 
-(when (require 'erlang-start nil t)
+  (add-hook 'fsharp-mode-hook (lambda ()
+                                (run-hooks 'prelude-sharp-mode-hook))))
 
-  (with-eval-after-load 'erlang-mode
-    (flymake-mode))
+(provide 'prelude-fsharp)
 
-  (when (not (null wrangler-path))
-    (add-to-list 'load-path wrangler-path)
-    (require 'wrangler)))
-
-(add-hook 'erlang-mode-hook (lambda ()
-                              (setq erlang-compile-function 'projectile-compile-project)))
-
-(provide 'prelude-erlang)
-
-;;; prelude-erlang.el ends here
+;;; prelude-fsharp.el ends here
