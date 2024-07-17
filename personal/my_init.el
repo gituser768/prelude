@@ -70,6 +70,14 @@
 (require 'centered-window)
 (centered-window-mode)
 
+(require 'mediawiki)
+(require 'origami)
+(require 'origami-parsers)
+(pop origami-parser-alist)
+(add-to-list 'origami-parser-alist
+             `(mediawiki-mode . ,(origami-markers-parser "{{" "}}")))
+
+
 ;;(which-key-mode -1)
 (setq enable-recursive-minibuffers t)
 (rainbow-delimiters-mode)

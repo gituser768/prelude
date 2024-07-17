@@ -148,6 +148,9 @@
   (crux-create-scratch-buffer)
   (org-mode))
 
+(require 'mediawiki)
+(define-key mediawiki-mode-map (kbd "C-\\") nil)
+
 (require 'escreen)
 (require 'helm-escreen)
 (define-key escreen-map "n" 'escreen-goto-next-screen)
