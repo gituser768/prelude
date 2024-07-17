@@ -22,7 +22,7 @@
 (key-chord-define-global "qd" 'dired)
 (key-chord-define-global "wg" 'magit-status)
 (key-chord-define-global "wc" 'magit-checkout)
-(key-chord-define-global "wp" 'magit-push-current)
+(key-chord-define-global "wp" 'magit-push-current-to-pushremote)
 ;; (key-chord-define-global "qi" (lambda (&optional arg)
 ;;                                 (interactive)
 ;;                                 (find-file "~/.emacs.d/personal/my_init.el")))

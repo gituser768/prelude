@@ -70,7 +70,7 @@
 (require 'centered-window)
 (centered-window-mode)
 
-(which-key-mode)
+;;(which-key-mode -1)
 (setq enable-recursive-minibuffers t)
 (rainbow-delimiters-mode)
 (setq whitespace-style
