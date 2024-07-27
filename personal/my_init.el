@@ -73,6 +73,10 @@
 (require 'mediawiki)
 (require 'origami)
 (require 'origami-parsers)
+(add-hook 'mediawiki-mode-hook 'origami-mode)
+(defun dh-goto-sandbox-wiki ()
+  (interactive)
+  (mediawiki-open "User:DMH223344/sandbox"))
 
 (add-to-list 'origami-parser-alist
              `(mediawiki-mode . ,(origami-markers-parser "{{" "}}")))

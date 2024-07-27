@@ -150,6 +150,9 @@
 
 (require 'mediawiki)
 (define-key mediawiki-mode-map (kbd "C-\\") nil)
+(define-key mediawiki-mode-map (kbd "C-x C-f") 'mediawiki-open-page-at-point)
+(define-key mediawiki-mode-map (kbd "C-c C-o") 'origami-open-node)
+(define-key mediawiki-mode-map (kbd "C-c O") 'origami-close-node)
 
 (require 'escreen)
 (require 'helm-escreen)
