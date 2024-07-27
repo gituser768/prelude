@@ -86,7 +86,7 @@
         (unless (file-exists-p output-dir)
           (make-directory output-dir))
         (dotimes (page num-pages)
-          (let ((cmd (format "magick '%s[%d]' -background white -alpha remove -thumbnail x300 '%s/thumb%d.png'"
+          (let ((cmd (format "magick '%s[%d]' -background white -alpha remove -thumbnail x300 '%s/thumb%d.png'; echo 'finished'"
                              file-name page output-dir (1+ page))))
             (make-process :name "pdf-thumbnailer"
                           :buffer "*pdf-thumbnailer*"
@@ -109,7 +109,7 @@
   "Insert a clickable thumbnail IMAGE representing PAGE."
   (let ((start (point)))
     (insert-image image)
-    (insert " ")
+    (insert (format "%d" page))
     (let ((map (make-sparse-keymap)))
       (define-key map [mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
       (define-key map [down-mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
@@ -148,26 +148,38 @@
 
 ;; keymap for reloading thumbnails
 (define-key pdf-thumbnail-mode-map (kbd "g") 'reload-pdf-thumbnails-interactively)
+(define-key pdf-thumbnail-mode-map (kbd "q") 'kill-buffer-and-window)
+
+(defun pdf-thumbnail-initialize()
+  (let* ((output-dir (make-temp-file "pdf-thumbs" t))
+         (pdf-buffer (current-buffer))
+         (pdf-file (buffer-file-name)))
+    (create-pdf-thumbnails-per-page-async pdf-file output-dir)
+    (setq pdf-thumbnail-path (concat output-dir "/thumbnails/"))
+    (setq pdf-thumbnail-pdf-buffer pdf-buffer)))
+
+(add-hook 'pdf-tools-enabled-hook 'pdf-thumbnail-initialize)
 
 (defun pdf-thumbnail-display ()
   "Display thumbnails for PDF-FILE."
   (interactive)
-  (let* ((output-dir (make-temp-file "pdf-thumbs" t))
-         (pdf-buffer (current-buffer))
+  (let* ((output-dir pdf-thumbnail-path)
+         (pdf-buffer pdf-thumbnail-pdf-buffer)
          (pdf-file (buffer-file-name))
-         (thumb-buffer (get-buffer-create (format "*%s Thumbnails*" (file-name-nondirectory pdf-file)))))
-    (create-pdf-thumbnails-per-page-async pdf-file output-dir)
-    (setq pdf-thumbnail-path (concat output-dir "/thumbnails/"))
+         (thumb-buffer (get-buffer-create (format "*%s Thumbnails*" (file-name-nondirectory pdf-file))))
+         (current-page-num (pdf-view-current-page)))
     (setq pdf-thumbnail-buffer thumb-buffer)
-    (setq pdf-thumbnail-pdf-buffer pdf-buffer)
-    (display-buffer pdf-buffer)
     (switch-to-buffer-other-window thumb-buffer)
-    (setq pdf-thumbnail-path (concat output-dir "/thumbnails/"))
+    (setq pdf-thumbnail-path output-dir)
     (setq pdf-thumbnail-buffer pdf-buffer)
     (setq pdf-thumbnail-pdf-buffer pdf-buffer)
     (setq buffer-read-only nil)
     (erase-buffer)
-    (pdf-thumbnail-mode)))
+    (pdf-thumbnail-mode)
+    (reload-pdf-thumbnails output-dir)
+    (goto-char (point-min))
+    (re-search-forward (format "%d" current-page-num))
+    (call-interactively 'er/expand-region) ))
 
 ;;(which-key-mode -1)
 (setq enable-recursive-minibuffers t)
