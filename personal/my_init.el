@@ -73,7 +73,7 @@
 (require 'mediawiki)
 (require 'origami)
 (require 'origami-parsers)
-(pop origami-parser-alist)
+
 (add-to-list 'origami-parser-alist
              `(mediawiki-mode . ,(origami-markers-parser "{{" "}}")))
 
