@@ -81,6 +81,109 @@
 (add-to-list 'origami-parser-alist
              `(mediawiki-mode . ,(origami-markers-parser "{{" "}}")))
 
+(defun create-pdf-thumbnails-per-page-async (file-name output-dir)
+  "Asynchronously create thumbnails for each page of the PDF in the current buffer using ImageMagick v7+, writing them out as they are generated."
+  (if (string= (file-name-extension file-name) "pdf")
+      (let* ((file-name file-name)
+             (output-dir (concat output-dir "/thumbnails/"))
+             (num-pages (pdf-info-number-of-pages file-name)))
+        (unless (file-exists-p output-dir)
+          (make-directory output-dir))
+        (dotimes (page num-pages)
+          (let ((cmd (format "magick '%s[%d]' -background white -alpha remove -thumbnail x300 '%s/thumb%d.png'; echo 'finished'"
+                             file-name page output-dir (1+ page))))
+            (make-process :name "pdf-thumbnailer"
+                          :buffer "*pdf-thumbnailer*"
+                          :command (list "bash" "-c" cmd)
+                          :connection-type 'pipe
+                          :noquery t)))
+        (message "Creating thumbnails in %s" output-dir))
+    (message "Make sure a PDF file is open in the buffer.")))
+
+(define-derived-mode pdf-thumbnail-mode special-mode "PDF Thumbnails"
+  "Major mode for displaying PDF thumbnails."
+  (defvar-local pdf-thumbnail-path nil
+    "Path to the PDF file for which thumbnails are being displayed.")
+  (defvar-local pdf-thumbnail-buffer nil
+    "Buffer name for displaying PDF thumbnails.")
+  (defvar-local pdf-thumnail-pdf-buffer nil
+    "Buffer name for displaying the PDF."))
+
+(defun pdf-thumbnail-insert-image (image page)
+  "Insert a clickable thumbnail IMAGE representing PAGE."
+  (let ((start (point)))
+    (insert-image image)
+    (insert (format "%d" page))
+    (let ((map (make-sparse-keymap)))
+      (define-key map [mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
+      (define-key map [down-mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
+      (put-text-property start (point) 'keymap map)
+      (put-text-property start (point) 'help-echo (format "Page %d" page)))))
+
+(defun pdf-thumbnail-open-page (page)
+  "Open the PDF at the specified PAGE."
+  (switch-to-buffer-other-window pdf-thumbnail-pdf-buffer)
+  (pdf-view-goto-page page))
+
+(defun reload-pdf-thumbnails (output-dir)
+  (let* ((thumbs (directory-files output-dir t "thumb.*\\.png$"))
+         (thumbs-nums (mapcar (lambda (thumb)
+                                (string-match "thumb\\([0-9]+\\)\\.png" thumb)
+                                (string-to-number (match-string 1 thumb)))
+                              thumbs))
+         (sorted-thumbs (mapcar (lambda (num)
+                                  (list
+                                   num
+                                   (format "%sthumb%d.png"
+                                           (expand-file-name (file-name-as-directory output-dir))
+                                           num)))
+                                (sort thumbs-nums '<))))
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (dolist (thumb sorted-thumbs)
+      (pdf-thumbnail-insert-image (create-image (first (last thumb))) (first thumb)))
+    (setq buffer-read-only t)
+    (goto-char (point-min))))
+
+(defun reload-pdf-thumbnails-interactively ()
+  "Reload thumbnails for the current PDF file."
+  (interactive)
+  (reload-pdf-thumbnails pdf-thumbnail-path))
+
+;; keymap for reloading thumbnails
+(define-key pdf-thumbnail-mode-map (kbd "g") 'reload-pdf-thumbnails-interactively)
+(define-key pdf-thumbnail-mode-map (kbd "q") 'kill-buffer-and-window)
+
+(defun pdf-thumbnail-initialize()
+  (let* ((output-dir (make-temp-file "pdf-thumbs" t))
+         (pdf-buffer (current-buffer))
+         (pdf-file (buffer-file-name)))
+    (create-pdf-thumbnails-per-page-async pdf-file output-dir)
+    (setq pdf-thumbnail-path (concat output-dir "/thumbnails/"))
+    (setq pdf-thumbnail-pdf-buffer pdf-buffer)))
+
+(add-hook 'pdf-tools-enabled-hook 'pdf-thumbnail-initialize)
+
+(defun pdf-thumbnail-display ()
+  "Display thumbnails for PDF-FILE."
+  (interactive)
+  (let* ((output-dir pdf-thumbnail-path)
+         (pdf-buffer pdf-thumbnail-pdf-buffer)
+         (pdf-file (buffer-file-name))
+         (thumb-buffer (get-buffer-create (format "*%s Thumbnails*" (file-name-nondirectory pdf-file))))
+         (current-page-num (pdf-view-current-page)))
+    (setq pdf-thumbnail-buffer thumb-buffer)
+    (switch-to-buffer-other-window thumb-buffer)
+    (setq pdf-thumbnail-path output-dir)
+    (setq pdf-thumbnail-buffer pdf-buffer)
+    (setq pdf-thumbnail-pdf-buffer pdf-buffer)
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (pdf-thumbnail-mode)
+    (reload-pdf-thumbnails output-dir)
+    (goto-char (point-min))
+    (re-search-forward (format "%d" current-page-num))
+    (call-interactively 'er/expand-region) ))
 
 ;;(which-key-mode -1)
 (setq enable-recursive-minibuffers t)
