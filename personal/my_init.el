@@ -1,3 +1,24 @@
+(require 'magit)
+(defun set-exec-path-from-shell-PATH ()
+  "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string
+			  "[ \t\n]*$" "" (shell-command-to-string
+					  "$SHELL --login -c 'echo $PATH'"
+					  ))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+
+(set-exec-path-from-shell-PATH)
+
+(require 'nov)
+
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
 (setq default-directory (concat (getenv "HOME") "/"))
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'super)
@@ -84,29 +105,17 @@
 (defun create-pdf-thumbnails-per-page-async (file-name output-dir)
   "Asynchronously create thumbnails for each page of the PDF in the current buffer using ImageMagick v7+, writing them out as they are generated."
   (if (string= (file-name-extension file-name) "pdf")
-      (let* ((file-name file-name)
-             (output-dir (concat output-dir "/thumbnails/"))
-             (num-pages (pdf-info-number-of-pages file-name)))
-        (unless (file-exists-p output-dir)
-          (make-directory output-dir))
-        (dotimes (page num-pages)
-          (let ((cmd (format "magick '%s[%d]' -background white -alpha remove -thumbnail x300 '%s/thumb%d.png'; echo 'finished'"
-                             file-name page output-dir (1+ page))))
-            (make-process :name "pdf-thumbnailer"
-                          :buffer "*pdf-thumbnailer*"
-                          :command (list "bash" "-c" cmd)
-                          :connection-type 'pipe
-                          :noquery t)))
-        (message "Creating thumbnails in %s" output-dir))
-    (message "Make sure a PDF file is open in the buffer.")))
+      (make-process :name "pdf-thumbnailer"
+                    :buffer "*pdf-thumbnailer*"
+                    :command (list "make-thumbnails.sh" file-name output-dir))))
 
 (define-derived-mode pdf-thumbnail-mode special-mode "PDF Thumbnails"
   "Major mode for displaying PDF thumbnails."
-  (defvar-local pdf-thumbnail-path nil
+  (defvar pdf-thumbnail-path nil
     "Path to the PDF file for which thumbnails are being displayed.")
-  (defvar-local pdf-thumbnail-buffer nil
+  (defvar pdf-thumbnail-buffer nil
     "Buffer name for displaying PDF thumbnails.")
-  (defvar-local pdf-thumnail-pdf-buffer nil
+  (defvar pdf-thumbnail-pdf-buffer nil
     "Buffer name for displaying the PDF."))
 
 (defun pdf-thumbnail-insert-image (image page)
@@ -115,15 +124,25 @@
     (insert-image image)
     (insert (format "%d" page))
     (let ((map (make-sparse-keymap)))
-      (define-key map [mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
       (define-key map [down-mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
       (put-text-property start (point) 'keymap map)
       (put-text-property start (point) 'help-echo (format "Page %d" page)))))
 
+(require 'use-package)
+(use-package pdf-view-restore
+  :after pdf-tools
+  :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode)
+  :ensure t)
+
 (defun pdf-thumbnail-open-page (page)
   "Open the PDF at the specified PAGE."
-  (switch-to-buffer-other-window pdf-thumbnail-pdf-buffer)
-  (pdf-view-goto-page page))
+  (if (not (buffer-live-p pdf-thumbnail-pdf-buffer))
+      (switch-to-buffer-other-window pdf-thumbnail-pdf-buffer))
+  (message "Navigating to page %d in buffer %s" page pdf-thumbnail-pdf-buffer)
+  (with-current-buffer pdf-thumbnail-pdf-buffer
+    (select-window (get-buffer-window pdf-thumbnail-pdf-buffer))
+    (pdf-view-goto-page page)))
 
 (defun reload-pdf-thumbnails (output-dir)
   (let* ((thumbs (directory-files output-dir t "thumb.*\\.png$"))
@@ -143,7 +162,12 @@
     (dolist (thumb sorted-thumbs)
       (pdf-thumbnail-insert-image (create-image (first (last thumb))) (first thumb)))
     (setq buffer-read-only t)
-    (goto-char (point-min))))
+    (goto-char (point-min))
+    (let ((current-page-num (with-current-buffer pdf-thumbnail-pdf-buffer
+                              (pdf-view-current-page))))
+      (re-search-forward (format "%d" current-page-num))
+      (deactivate-mark)
+      (forward-char))))
 
 (defun reload-pdf-thumbnails-interactively ()
   "Reload thumbnails for the current PDF file."
@@ -155,11 +179,16 @@
 (define-key pdf-thumbnail-mode-map (kbd "q") 'kill-buffer-and-window)
 
 (defun pdf-thumbnail-initialize()
-  (let* ((output-dir (make-temp-file "pdf-thumbs" t))
+  (let* ((home-dir (expand-file-name "~/"))
          (pdf-buffer (current-buffer))
-         (pdf-file (buffer-file-name)))
+         (pdf-file (buffer-file-name))
+         (output-dir (concat home-dir
+                             ".thumbnails/"
+                             (file-name-base pdf-file)
+                             "/")))
+    (make-directory output-dir t)
     (create-pdf-thumbnails-per-page-async pdf-file output-dir)
-    (setq pdf-thumbnail-path (concat output-dir "/thumbnails/"))
+    (setq pdf-thumbnail-path output-dir)
     (setq pdf-thumbnail-pdf-buffer pdf-buffer)))
 
 (add-hook 'pdf-tools-enabled-hook 'pdf-thumbnail-initialize)
@@ -168,22 +197,27 @@
   "Display thumbnails for PDF-FILE."
   (interactive)
   (let* ((output-dir pdf-thumbnail-path)
-         (pdf-buffer pdf-thumbnail-pdf-buffer)
+         (pdf-buffer (current-buffer))
          (pdf-file (buffer-file-name))
-         (thumb-buffer (get-buffer-create (format "*%s Thumbnails*" (file-name-nondirectory pdf-file))))
+         (thumb-buffer (get-buffer-create (format "*Thumbnails*")))
          (current-page-num (pdf-view-current-page)))
     (setq pdf-thumbnail-buffer thumb-buffer)
+    (setq pdf-thumbnail-pdf-buffer pdf-buffer)
     (switch-to-buffer-other-window thumb-buffer)
     (setq pdf-thumbnail-path output-dir)
-    (setq pdf-thumbnail-buffer pdf-buffer)
-    (setq pdf-thumbnail-pdf-buffer pdf-buffer)
     (setq buffer-read-only nil)
     (erase-buffer)
     (pdf-thumbnail-mode)
     (reload-pdf-thumbnails output-dir)
     (goto-char (point-min))
     (re-search-forward (format "%d" current-page-num))
-    (call-interactively 'er/expand-region) ))
+    (deactivate-mark)
+    (forward-char)))
+
+(require 'calibredb)
+(setq calibredb-root-dir "~/Calibre Library/")
+(setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+(setq calibredb-library-alist '(("~/Calibre Library")))
 
 ;;(which-key-mode -1)
 (setq enable-recursive-minibuffers t)
