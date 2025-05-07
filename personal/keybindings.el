@@ -45,6 +45,7 @@
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c a") 'aider-transient-menu)
     (define-key map (kbd "C-c DEL") 'winner-undo)
     (define-key map (kbd "C-x 4 2 f") 'split-horiz-find)
     (define-key map (kbd "C-x 4 3 f") 'split-vert-find)

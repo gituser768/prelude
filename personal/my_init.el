@@ -34,6 +34,21 @@ apps are not started from a shell."
 (require 'diff-hl)
 (diff-hl-margin-mode)
 
+(global-so-long-mode 1)
+
+(defun load-env-vars-from-file (file)
+  "Load environment variables from a FILE with 'export' syntax."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (while (re-search-forward "^\\([^=]+\\)=\\(.*\\);?$" nil t)
+      (let ((var (match-string 1))
+            (value (match-string 2)))
+        (setenv var value)))))
+
+;; Usage:
+(load-env-vars-from-file "~/.emacs.d/personal/secrets")
+
 (setq my-org-path "~/org/")
 
 (require 'use-package)
@@ -372,5 +387,53 @@ apps are not started from a shell."
 (condition-case nil
     (server-start)
   (error (server-running-p)))
+
+;; install straight:
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+            (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(defun load-dot-env ()
+  (interactive)
+  (let ((env-file (expand-file-name ".env" default-directory)))
+    (when (file-exists-p env-file)
+      (with-temp-buffer
+        (insert-file-contents env-file)
+        (goto-char (point-min))
+        (while (re-search-forward "^\\([^=]+\\)=\\(.*\\)$" nil t)
+          (setenv (match-string 1) (match-string 2)))))))
+
+(load-dot-env)
+
+(use-package aider
+  :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
+  :config
+  ;; Use claude-3-5-sonnet cause it is best in aider benchmark
+  ;; (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
+  (setq aider-args '("--model" "o3-mini"))
+  (setenv "OPENAI_API_KEY" (getenv "OPENAI_API_KEY"))
+  ;; Or use chatgpt model since it is most well known
+  ;; (setq aider-args '("--model" "o3-mini"))
+  ;; (setenv "OPENAI_API_KEY" <your-openai-api-key>)
+  ;; Or use gemini v2 model since it is very good and free
+  ;; (setq aider-args '("--model" "gemini/gemini-exp-1206"))
+  ;; (setenv "GEMINI_API_KEY" <your-gemini-api-key>)
+  ;; Or use your personal config file
+  ;; (setq aider-args `("--config" ,(expand-file-name "~/.aider.conf.yml")))
+  ;; ;;
+  ;; Optional: Set a key binding for the transient menu
+  (global-set-key (kbd "C-c a") 'aider-transient-menu))
 
 (provide 'my-init)
