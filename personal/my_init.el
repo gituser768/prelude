@@ -15,9 +15,10 @@ apps are not started from a shell."
 
 (set-exec-path-from-shell-PATH)
 
-(require 'nov)
 
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+;; (require 'nov)
+
+;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 (setq default-directory (concat (getenv "HOME") "/"))
 (setq mac-option-modifier 'meta)
@@ -106,135 +107,7 @@ apps are not started from a shell."
 (require 'centered-window)
 (centered-window-mode)
 
-(require 'mediawiki)
-(require 'origami)
-(require 'origami-parsers)
-(add-hook 'mediawiki-mode-hook 'origami-mode)
-(defun dh-goto-sandbox-wiki ()
-  (interactive)
-  (mediawiki-open "User:DMH223344/sandbox"))
-
-(add-to-list 'origami-parser-alist
-             `(mediawiki-mode . ,(origami-markers-parser "{{" "}}")))
-
-(defun create-pdf-thumbnails-per-page-async (file-name output-dir)
-  "Asynchronously create thumbnails for each page of the PDF in the current buffer using ImageMagick v7+, writing them out as they are generated."
-  (if (string= (file-name-extension file-name) "pdf")
-      (make-process :name "pdf-thumbnailer"
-                    :buffer "*pdf-thumbnailer*"
-                    :command (list "make-thumbnails.sh" file-name output-dir))))
-
-(define-derived-mode pdf-thumbnail-mode special-mode "PDF Thumbnails"
-  "Major mode for displaying PDF thumbnails."
-  (defvar pdf-thumbnail-path nil
-    "Path to the PDF file for which thumbnails are being displayed.")
-  (defvar pdf-thumbnail-buffer nil
-    "Buffer name for displaying PDF thumbnails.")
-  (defvar pdf-thumbnail-pdf-buffer nil
-    "Buffer name for displaying the PDF."))
-
-(defun pdf-thumbnail-insert-image (image page)
-  "Insert a clickable thumbnail IMAGE representing PAGE."
-  (let ((start (point)))
-    (insert-image image)
-    (insert (format "%d" page))
-    (let ((map (make-sparse-keymap)))
-      (define-key map [down-mouse-1] `(lambda () (interactive) (pdf-thumbnail-open-page ,page)))
-      (put-text-property start (point) 'keymap map)
-      (put-text-property start (point) 'help-echo (format "Page %d" page)))))
-
-(require 'use-package)
-(use-package pdf-view-restore
-  :after pdf-tools
-  :config
-  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode)
-  :ensure t)
-
-(defun pdf-thumbnail-open-page (page)
-  "Open the PDF at the specified PAGE."
-  (if (not (buffer-live-p pdf-thumbnail-pdf-buffer))
-      (switch-to-buffer-other-window pdf-thumbnail-pdf-buffer))
-  (message "Navigating to page %d in buffer %s" page pdf-thumbnail-pdf-buffer)
-  (with-current-buffer pdf-thumbnail-pdf-buffer
-    (select-window (get-buffer-window pdf-thumbnail-pdf-buffer))
-    (pdf-view-goto-page page)))
-
-(defun reload-pdf-thumbnails (output-dir)
-  (let* ((thumbs (directory-files output-dir t "thumb.*\\.png$"))
-         (thumbs-nums (mapcar (lambda (thumb)
-                                (string-match "thumb\\([0-9]+\\)\\.png" thumb)
-                                (string-to-number (match-string 1 thumb)))
-                              thumbs))
-         (sorted-thumbs (mapcar (lambda (num)
-                                  (list
-                                   num
-                                   (format "%sthumb%d.png"
-                                           (expand-file-name (file-name-as-directory output-dir))
-                                           num)))
-                                (sort thumbs-nums '<))))
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (dolist (thumb sorted-thumbs)
-      (pdf-thumbnail-insert-image (create-image (first (last thumb))) (first thumb)))
-    (setq buffer-read-only t)
-    (goto-char (point-min))
-    (let ((current-page-num (with-current-buffer pdf-thumbnail-pdf-buffer
-                              (pdf-view-current-page))))
-      (re-search-forward (format "%d" current-page-num))
-      (deactivate-mark)
-      (forward-char))))
-
-(defun reload-pdf-thumbnails-interactively ()
-  "Reload thumbnails for the current PDF file."
-  (interactive)
-  (reload-pdf-thumbnails pdf-thumbnail-path))
-
-;; keymap for reloading thumbnails
-(define-key pdf-thumbnail-mode-map (kbd "g") 'reload-pdf-thumbnails-interactively)
-(define-key pdf-thumbnail-mode-map (kbd "q") 'kill-buffer-and-window)
-
-(defun pdf-thumbnail-initialize()
-  (let* ((home-dir (expand-file-name "~/"))
-         (pdf-buffer (current-buffer))
-         (pdf-file (buffer-file-name))
-         (output-dir (concat home-dir
-                             ".thumbnails/"
-                             (file-name-base pdf-file)
-                             "/")))
-    (make-directory output-dir t)
-    (create-pdf-thumbnails-per-page-async pdf-file output-dir)
-    (setq pdf-thumbnail-path output-dir)
-    (setq pdf-thumbnail-pdf-buffer pdf-buffer)))
-
-(add-hook 'pdf-tools-enabled-hook 'pdf-thumbnail-initialize)
-
-(defun pdf-thumbnail-display ()
-  "Display thumbnails for PDF-FILE."
-  (interactive)
-  (let* ((output-dir pdf-thumbnail-path)
-         (pdf-buffer (current-buffer))
-         (pdf-file (buffer-file-name))
-         (thumb-buffer (get-buffer-create (format "*Thumbnails*")))
-         (current-page-num (pdf-view-current-page)))
-    (setq pdf-thumbnail-buffer thumb-buffer)
-    (setq pdf-thumbnail-pdf-buffer pdf-buffer)
-    (switch-to-buffer-other-window thumb-buffer)
-    (setq pdf-thumbnail-path output-dir)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (pdf-thumbnail-mode)
-    (reload-pdf-thumbnails output-dir)
-    (goto-char (point-min))
-    (re-search-forward (format "%d" current-page-num))
-    (deactivate-mark)
-    (forward-char)))
-
-(require 'calibredb)
-(setq calibredb-root-dir "~/Calibre Library/")
-(setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-(setq calibredb-library-alist '(("~/Calibre Library")))
-
-;;(which-key-mode -1)
+;;(which-key-mode)
 (setq enable-recursive-minibuffers t)
 (rainbow-delimiters-mode)
 (setq whitespace-style
@@ -370,7 +243,7 @@ apps are not started from a shell."
                                       '((vertical-scroll-bars . nil)
                                         (horizontal-scroll-bars . nil)))))
 
-(toggle-scroll-bar -1)
+;;(toggle-scroll-bar -1)
 (which-function-mode -1)
 
 (setq prelude-guru nil)
@@ -417,12 +290,24 @@ apps are not started from a shell."
 
 (load-dot-env)
 
+(define-key input-decode-map "\e[s-s" [s-s])
+(define-key input-decode-map "\e[C-'" (kbd "C-'"))
+(define-key input-decode-map "\e[s-e" [s-e])
+(define-key input-decode-map "\e[s-r" [s-r])
+(define-key input-decode-map "\e[s-n" [s-n])
+(define-key input-decode-map "\e[s-p" [s-p])
+(define-key input-decode-map "\e[s-b" [s-b])
+(define-key input-decode-map "\e[s-u" [s-u])
+
+(global-eldoc-mode -1)
+(setq eldoc-echo-area-use-multiline-p nil)
+
 (use-package aider
   :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
   :config
   ;; Use claude-3-5-sonnet cause it is best in aider benchmark
   ;; (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
-  (setq aider-args '("--model" "o3-mini"))
+  (setq aider-args '("--model" "gpt-4.1" "--no-auto-commits"))
   (setenv "OPENAI_API_KEY" (getenv "OPENAI_API_KEY"))
   ;; Or use chatgpt model since it is most well known
   ;; (setq aider-args '("--model" "o3-mini"))
@@ -436,4 +321,6 @@ apps are not started from a shell."
   ;; Optional: Set a key binding for the transient menu
   (global-set-key (kbd "C-c a") 'aider-transient-menu))
 
+(require 'prelude-helm-everywhere)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 (provide 'my-init)

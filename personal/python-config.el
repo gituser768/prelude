@@ -14,7 +14,7 @@
 
 (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
 
-(setq-default flycheck-disabled-checkers '(python-flake8))
+(setq-default flycheck-disabled-checkers '(python-flake8 python-pycompile python-mypy))
 
 (define-key python-mode-map [remap backward-sentence] nil)
 (define-key python-mode-map [remap forward-sentence] nil)
