@@ -65,7 +65,7 @@
          "/Library/TeX/texbin/" ":"
          (getenv "PATH")))
 
-(define-key global-map "\C-cc" 'org-capture)
+;;(define-key global-map "\C-cc" 'org-capture)
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 

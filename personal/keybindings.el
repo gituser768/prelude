@@ -45,7 +45,6 @@
 
 (defvar my-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c a") 'aider-transient-menu)
     (define-key map (kbd "C-c DEL") 'winner-undo)
     (define-key map (kbd "C-x 4 2 f") 'split-horiz-find)
     (define-key map (kbd "C-x 4 3 f") 'split-vert-find)
@@ -72,6 +71,9 @@
     (define-key map [s-s] 'swiper)
     (define-key map [s-p] 'diff-hl-previous-hunk)
     (define-key map [s-n] 'diff-hl-next-hunk)
+    (define-key map (kbd "s-s") 'swiper)
+    (define-key map (kbd "s-p") 'diff-hl-previous-hunk)
+    (define-key map (kbd "s-n") 'diff-hl-next-hunk)
     (define-key map (kbd "s-a") 'move-to-first-alpha)
     (define-key map (kbd "C-M-y") 'yank-and-pop)
     (define-key map (kbd "s-t") (lambda ()
@@ -113,11 +115,13 @@
     (define-key map (kbd "<f8> e") 'org-clock-out)
     (define-key map (kbd "<f8> f") 'org-search-view)
     (define-key map [s-u] 'revert-buffer)
-    ;; (define-key map (kbd "s-f") 'move-to-next-term)
-    ;; (define-key map (kbd "s-b") 'move-to-prev-term)
     (define-key map [s-b] 'crux-switch-to-previous-buffer)
     (define-key map [s-r] (lambda () (interactive) (scroll-down-command 3)))
     (define-key map [s-e] (lambda () (interactive) (scroll-up-command 3)))
+    (define-key map (kbd "s-u") 'revert-buffer)
+    (define-key map (kbd "s-b") 'crux-switch-to-previous-buffer)
+    (define-key map (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
+    (define-key map (kbd "s-e") (lambda () (interactive) (scroll-up-command 3)))
     (define-key map (kbd "C-z") 'repeat)
     (define-key map (kbd "C-M-SPC") 'sp-mark-sexp)
     (define-key map (kbd "s-d") 'avy-goto-word-1)
@@ -127,7 +131,9 @@
 (define-minor-mode my-keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
   :init-value t
-  :lighter "")
+  :lighter ""
+  :global t
+  :keymap my-keys-minor-mode-map)
 
 (my-keys-minor-mode 1)
 
@@ -248,6 +254,7 @@
 (define-key prelude-mode-map (kbd "s-j") nil)
 (define-key prelude-mode-map (kbd "s-k") nil)
 (define-key prelude-mode-map (kbd "s-l") nil)
+(define-key prelude-mode-map (kbd "s-r") nil)
 
 (define-key global-map (kbd "C-x C-c") nil)
 (define-key prelude-mode-map (kbd "s-g") nil)

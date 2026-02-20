@@ -261,23 +261,6 @@ apps are not started from a shell."
     (server-start)
   (error (server-running-p)))
 
-;; install straight:
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-            (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
 (defun load-dot-env ()
   (interactive)
   (let ((env-file (expand-file-name ".env" default-directory)))
@@ -302,25 +285,128 @@ apps are not started from a shell."
 (global-eldoc-mode -1)
 (setq eldoc-echo-area-use-multiline-p nil)
 
-(use-package aider
-  :straight (:host github :repo "tninja/aider.el" :files ("aider.el"))
-  :config
-  ;; Use claude-3-5-sonnet cause it is best in aider benchmark
-  ;; (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
-  (setq aider-args '("--model" "gpt-4.1" "--no-auto-commits"))
-  (setenv "OPENAI_API_KEY" (getenv "OPENAI_API_KEY"))
-  ;; Or use chatgpt model since it is most well known
-  ;; (setq aider-args '("--model" "o3-mini"))
-  ;; (setenv "OPENAI_API_KEY" <your-openai-api-key>)
-  ;; Or use gemini v2 model since it is very good and free
-  ;; (setq aider-args '("--model" "gemini/gemini-exp-1206"))
-  ;; (setenv "GEMINI_API_KEY" <your-gemini-api-key>)
-  ;; Or use your personal config file
-  ;; (setq aider-args `("--config" ,(expand-file-name "~/.aider.conf.yml")))
-  ;; ;;
-  ;; Optional: Set a key binding for the transient menu
-  (global-set-key (kbd "C-c a") 'aider-transient-menu))
-
 (require 'prelude-helm-everywhere)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+;; add melpa to package archives, as vterm is on melpa:
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
+;; install required inheritenv dependency:
+(use-package inheritenv
+  :vc (:url "https://github.com/purcell/inheritenv" :rev :newest))
+
+;; for eat terminal backend:
+(use-package eat :ensure t)
+
+;; for vterm terminal backend:
+(use-package vterm :ensure t)
+
+;; install claude-code.el
+(use-package claude-code :ensure t
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :config
+  ;; optional IDE integration with Monet
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+  (monet-mode 1)
+
+  (claude-code-mode)
+  :bind-keymap ("C-c c" . claude-code-command-map)
+
+  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
+  :bind
+  (:repeat-map my-claude-code-map ("M" . claude-code-cycle-mode)))
+;; (add-hook 'claude-code-start-hook
+;;           (lambda ()
+;;             (setq-local eat-minimum-latency 0.033
+;;                         eat-maximum-latency 0.1)))
+;; (setq eat-term-scrollback-size 500000)  ; Increase to 500k characters
+
+;; Enable/disable buffering to prevent flickering on multi-line input (default is t)
+;; When enabled, vterm output that appears to be redrawing multi-line input boxes
+;; will be buffered briefly and processed in a single batch
+;; This prevents flickering when Claude redraws its input box as it expands
+(setq claude-code-vterm-buffer-multiline-output t)
+
+;; Control the delay before processing buffered vterm output (default is 0.01)
+;; This is the time in seconds that vterm waits to collect output bursts
+;; A longer delay may reduce flickering more but could feel less responsive
+;; The default of 0.01 seconds (10ms) provides a good balance
+(setq claude-code-vterm-multiline-delay 0.1)
+;; Increase vterm scrollback to 100000 lines (the maximum allowed)
+;; Note: This increases memory usage
+(setq vterm-max-scrollback 100000)
+
+(custom-set-faces
+ '(claude-code-repl-face ((t (:family "JuliaMono")))))
+
+(setq claude-code-terminal-backend 'vterm)
+;; (setq claude-code-terminal-backend 'eat)
+
+;; SLOWNESS:
+
+;; If a non-file buffer inherits a remote default-directory, reset it.
+(defun my/localize-default-directory-in-nonfile-buffers ()
+  (when (and (not buffer-file-name)
+             (stringp default-directory)
+             (file-remote-p default-directory))
+    (setq default-directory (expand-file-name "~"))))
+(add-hook 'after-change-major-mode-hook #'my/localize-default-directory-in-nonfile-buffers)
+
+(defun my/ensure-local-default-directory (orig-fun &rest args)
+  (let ((default-directory (if (and (stringp default-directory)
+                                    (file-remote-p default-directory))
+                               (expand-file-name "~")
+                             default-directory)))
+    (apply orig-fun args)))
+
+(with-eval-after-load 'helm
+  (advice-add 'helm-M-x :around #'my/ensure-local-default-directory))
+
+;; Magit often spawns many subprocesses — keep it local unless you really want TRAMP
+(with-eval-after-load 'magit
+  (advice-add 'magit-status   :around #'my/ensure-local-default-directory)
+  (advice-add 'magit-dispatch :around #'my/ensure-local-default-directory))
+
+(setq helm-M-x-show-short-doc nil)
+
+;; Disable TRAMP until you explicitly turn it on (M-x tramp-mode)
+(setq tramp-mode nil)
+
+(with-eval-after-load 'helm
+  (helm-mode -1))
+(global-set-key (kbd "M-x") #'execute-extended-command)
+(global-set-key (kbd "C-x C-f") #'find-file)
+
+;; Vertico: minimal, fast UI for the minibuffer
+(use-package vertico
+  :ensure t
+  :init (vertico-mode 1)
+  :custom (vertico-cycle t))
+
+(use-package savehist
+  :init (savehist-mode 1))
+
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        ;; Use basic/partial-completion for files to keep ~ and / completion nice
+        completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :ensure t
+  :init (marginalia-mode 1))
+
+(use-package consult
+  :ensure t
+  :bind (("C-x b"   . consult-buffer)
+         ("M-y"     . consult-yank-pop)
+         ("C-x C-r" . consult-recent-file))
+  :init
+  ;; Make TAB completion-in-region use the same UI
+  (setq completion-in-region-function #'consult-completion-in-region))
+
+
 (provide 'my-init)
