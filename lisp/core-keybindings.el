@@ -1,0 +1,212 @@
+;;; core-keybindings.el --- Custom keybindings -*- lexical-binding: t; -*-
+
+;;; --- Key translations (C-h→DEL, M-h→M-DEL, etc.) ---
+(define-key key-translation-map (kbd "C-?") (kbd "C-h"))
+(define-key key-translation-map (kbd "C-h") (kbd "DEL"))
+(define-key key-translation-map (kbd "M-h") (kbd "M-DEL"))
+(define-key key-translation-map (kbd "C-M-h") (kbd "C-M-<backspace>"))
+
+(global-unset-key (kbd "M-u"))
+(global-unset-key (kbd "s-a"))
+
+;;; --- Paredit-everywhere unbindings (vendored) ---
+(require 'paredit-everywhere)
+(define-key paredit-everywhere-mode-map (kbd "M-s") nil)
+(define-key paredit-everywhere-mode-map (kbd "M-)") nil)
+(define-key paredit-everywhere-mode-map (kbd "M-(") nil)
+
+;;; --- Term raw map ---
+(require 'term)
+(define-key term-raw-map (kbd "C-v") 'scroll-up-command)
+(define-key term-raw-map (kbd "M-v") 'scroll-down-command)
+(define-key term-raw-map (kbd "M-f") 'forward-word)
+(define-key term-raw-map (kbd "M-b") 'backward-word)
+(define-key term-raw-map (kbd "C-f") 'forward-char)
+(define-key term-raw-map (kbd "C-b") 'backward-char)
+
+(require 'smartparens)
+
+;;; --- Multiple cursors fix ---
+(use-package multiple-cursors :demand t)
+(define-key mc/keymap (kbd "C-'") nil)
+
+;;; --- Disable undo-tree remaps ---
+(global-set-key [remap other-window] nil)
+(global-set-key [remap undo] nil)
+
+;;; --- My-keys minor mode ---
+(defvar my-keys-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c DEL") 'winner-undo)
+    (define-key map (kbd "C-x 4 2 f") 'split-horiz-find)
+    (define-key map (kbd "C-x 4 3 f") 'split-vert-find)
+    (define-key map (kbd "s-h") 'windmove-left)
+    (define-key map (kbd "s-l") 'windmove-right)
+    (define-key map (kbd "s-k") 'sp-kill-hybrid-sexp)
+    (define-key map (kbd "s-j") 'windmove-down)
+    (define-key map (kbd "s-n") 'next-line)
+    (define-key map (kbd "s-p") 'previous-line)
+    (define-key map (kbd "M-:") 'helm-eval-expression-with-eldoc)
+    (define-key map (kbd "M-u") 'sp-splice-sexp-killing-backward)
+    (define-key map (kbd "C-M-<backspace>") 'backward-kill-sexp)
+    (define-key map (kbd "M-l") 'move-to-window-line-top-bottom)
+    (define-key map (kbd "C-<return>") 'move-past-close-and-reindent)
+    (define-key map (kbd "M-)") 'kill-to-end-of-sexp)
+    (define-key map (kbd "M-(") 'kill-to-beginning-of-sexp)
+    (define-key map (kbd "C-M-q") 'unfill-region)
+    (define-key map (kbd "M-m") 'delete-indentation)
+    (define-key map [s-s] 'swiper)
+    (define-key map [s-p] 'diff-hl-previous-hunk)
+    (define-key map [s-n] 'diff-hl-next-hunk)
+    (define-key map (kbd "s-s") 'swiper)
+    (define-key map (kbd "s-p") 'diff-hl-previous-hunk)
+    (define-key map (kbd "s-n") 'diff-hl-next-hunk)
+    (define-key map (kbd "s-a") 'move-to-first-alpha)
+    (define-key map (kbd "C-M-y") 'yank-and-pop)
+    (define-key map (kbd "C-w") 'better-kill-line)
+    (define-key map (kbd "M-s") 'sp-splice-sexp)
+    (define-key map (kbd "C-j") 'previous-line)
+    (define-key map (kbd "C-'") 'er/expand-region)
+    (define-key map (kbd "M-j") 'mark-paragraph)
+    (define-key map (kbd "C-M-j") 'mark-to-end-of-paragraph)
+    (define-key map (kbd "s-i") 'other-frame)
+    (define-key map (kbd "M-y") 'helm-show-kill-ring)
+    (define-key map (kbd "s-2") (lambda (&optional arg)
+                                  (interactive)
+                                  (split-window-below)
+                                  (windmove-down)))
+    (define-key map (kbd "s-3") (lambda (&optional arg)
+                                  (interactive)
+                                  (split-window-right)
+                                  (windmove-right)))
+    (define-key map (kbd "s-1") 'delete-other-windows)
+    (define-key map (kbd "s-0") 'delete-window)
+    (define-key map (kbd "s-5") 'make-frame-command)
+    (define-key map (kbd "s-<backspace>") 'winner-undo)
+    (define-key map (kbd "s-f") 'helm-projectile-find-file)
+    (define-key map (kbd "<f8> c") 'calendar)
+    (define-key map (kbd "<f8> o") 'dh-make-org-scratch)
+    (define-key map [s-u] 'revert-buffer)
+    (define-key map [s-b] 'crux-switch-to-previous-buffer)
+    (define-key map [s-r] (lambda () (interactive) (scroll-down-command 3)))
+    (define-key map [s-e] (lambda () (interactive) (scroll-up-command 3)))
+    (define-key map (kbd "s-u") 'revert-buffer)
+    (define-key map (kbd "s-b") 'crux-switch-to-previous-buffer)
+    (define-key map (kbd "s-r") (lambda () (interactive) (scroll-down-command 3)))
+    (define-key map (kbd "s-e") (lambda () (interactive) (scroll-up-command 3)))
+    (define-key map (kbd "C-z") 'repeat)
+    (define-key map (kbd "C-M-SPC") 'sp-mark-sexp)
+    (define-key map (kbd "s-d") 'avy-goto-word-1)
+    map)
+  "my-keys-minor-mode keymap.")
+
+(define-minor-mode my-keys-minor-mode
+  "A minor mode so that my key settings override annoying major modes."
+  :init-value t
+  :lighter ""
+  :global t
+  :keymap my-keys-minor-mode-map)
+
+(my-keys-minor-mode 1)
+
+(add-to-list 'emulation-mode-map-alists `((my-keys-minor-mode . ,my-keys-minor-mode-map)))
+
+;;; --- Utility functions ---
+(require 'crux)
+
+(defun better-kill-line (&optional arg)
+  (interactive "p")
+  (if mark-active
+      (kill-region (region-beginning) (region-end))
+    (move-beginning-of-line nil)
+    (kill-line arg)
+    (crux-move-to-mode-line-start)))
+
+(defun dh-make-org-scratch ()
+  (interactive)
+  (crux-create-scratch-buffer)
+  (org-mode))
+
+;;; --- Escreen bindings ---
+(require 'escreen)
+(require 'helm-escreen)
+(define-key escreen-map "n" 'escreen-goto-next-screen)
+(define-key escreen-map (kbd "C-\\") 'escreen-goto-last-screen)
+(define-key escreen-map "c" 'helm-escreen-create-screen)
+(define-key escreen-map "s" 'helm-escreen-select-escreen)
+(define-key escreen-map "k" 'helm-escreen-kill-escreen)
+(define-key escreen-map "r" 'helm-escreen-rename-escreen)
+(define-key escreen-map "w" 'helm-escreen-current-escreen-name)
+
+;;; --- Indent rigidly map ---
+(setq indent-rigidly-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map (kbd "C-b")  'indent-rigidly-left)
+        (define-key map (kbd "C-f") 'indent-rigidly-right)
+        (define-key map (kbd "C-S-b")  'indent-rigidly-left-to-tab-stop)
+        (define-key map (kbd "C-S-f") 'indent-rigidly-right-to-tab-stop)
+        map))
+
+;;; --- Copy/mark functions ---
+(defun copy-line ()
+  (interactive)
+  (save-excursion
+    (back-to-indentation)
+    (set-mark-command nil)
+    (move-end-of-line nil)
+    (kill-ring-save (mark) (point))))
+
+(defun end-of-line-p ()
+  (interactive)
+  (let ((cur-col (current-column))
+        (end-col (save-excursion (end-of-line) (current-column))))
+    (= cur-col end-col)))
+
+(defun mark-at-end-or-copy-line ()
+  (interactive)
+  (if (or (use-region-p) (call-interactively 'end-of-line-p))
+      (copy-line)
+    (progn
+      (set-mark-command nil)
+      (move-end-of-line nil)
+      (exchange-point-and-mark))))
+
+(global-unset-key (kbd "s-y"))
+(global-set-key (kbd "s-y") 'mark-at-end-or-copy-line)
+
+;;; --- Relative path ---
+(defun dh-get-relative-path ()
+  (interactive)
+  (insert (file-relative-name (read-string "Absolute Path: "))))
+
+;;; --- Keyboard-escape-quit advice ---
+(defadvice keyboard-escape-quit (around my-keyboard-escape-quit activate)
+  "Don't allow esc esc esc to destroy other windows."
+  (let (orig-one-window-p)
+    (fset 'orig-one-window-p (symbol-function 'one-window-p))
+    (fset 'one-window-p (lambda (&optional nomini all-frames) t))
+    (unwind-protect
+        ad-do-it
+      (fset 'one-window-p (symbol-function 'orig-one-window-p)))))
+
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;;; --- Company bindings ---
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "<escape>") 'company-abort)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle))
+
+;;; --- Dired-subtree ---
+(with-eval-after-load 'dired
+  (require 'dired-subtree)
+  (define-key dired-mode-map (kbd "TAB") 'dired-subtree-toggle))
+
+;;; --- Unset global keys ---
+(global-unset-key (kbd "s-e"))
+(global-unset-key (kbd "s-r"))
+(define-key global-map (kbd "C-x C-c") nil)
+
+(provide 'core-keybindings)
+;;; core-keybindings.el ends here
