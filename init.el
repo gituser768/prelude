@@ -86,6 +86,7 @@
 (load "mod-python")
 (load "mod-term")
 (load "mod-os")
+(load "mod-latex")
 
 ;;; --- Start server ---
 (condition-case nil

@@ -11,7 +11,9 @@
   (key-chord-define-global "qt" (lambda (&optional arg)
                                   (interactive "D")
                                   (helm-projectile-switch-to-eshell default-directory)))
-  (key-chord-define-global "qs" 'ag-project)
+  (key-chord-define-global "qs" (lambda ()
+                                  (interactive)
+                                  (helm-grep-ag (expand-file-name (projectile-project-root)) nil)))
 
   (key-chord-define-global "zz" 'zop-up-to-char)
   (key-chord-define-global "zb" (lambda (&optional arg)
