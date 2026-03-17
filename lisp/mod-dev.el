@@ -18,6 +18,8 @@
        :branch "main"
        :rev :newest)
   :hook (prog-mode . copilot-mode)
+  :config
+  (setq copilot-indent-offset-warning-disable t)
   :bind (:map copilot-completion-map
          ("<tab>" . copilot-accept-completion)
          ("TAB"   . copilot-accept-completion)))

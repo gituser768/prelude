@@ -97,6 +97,8 @@
     (define-key map (kbd "C-z") 'repeat)
     (define-key map (kbd "C-M-SPC") 'sp-mark-sexp)
     (define-key map (kbd "s-d") 'avy-goto-word-1)
+    (define-key map (kbd "C-c D") 'crux-delete-file-and-buffer)
+    (define-key map (kbd "M-o") 'open-line)
     map)
   "my-keys-minor-mode keymap.")
 

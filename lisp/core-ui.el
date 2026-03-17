@@ -46,7 +46,9 @@
                 mode-line-buffer-identification sml/pos-id-separator
                 mode-line-position evil-mode-line-tag smartrep-mode-line-string
                 sml/pre-modes-separator mode-line-modes mode-line-misc-info
-                (:eval (magit-get-current-branch)) mode-line-end-spaces))
+                (:eval (unless (file-remote-p default-directory)
+                         (magit-get-current-branch)))
+                mode-line-end-spaces))
 
 ;;; --- Centered window mode ---
 (use-package centered-window

@@ -38,8 +38,24 @@
 (with-eval-after-load 'tramp
   (tramp-set-completion-function "ssh"
                                  '((tramp-parse-sconfig "~/.ssh/config"))))
-;; Disable TRAMP by default (M-x tramp-mode to enable)
-(setq tramp-mode nil)
+;; Enable TRAMP
+(setq tramp-mode t)
+
+;;; --- Open remote dired files locally ---
+(defun dired-open-file-locally ()
+  "Copy remote file to tmp and open it with the default local program."
+  (interactive)
+  (let* ((file (dired-get-file-for-visit))
+         (local-file (if (file-remote-p file)
+                         (let ((tmp (make-temp-file "tramp-" nil
+                                      (concat "." (file-name-extension file)))))
+                           (copy-file file tmp t)
+                           tmp)
+                       file)))
+    (call-process "open" nil 0 nil local-file)))
+
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "C-c o") #'dired-open-file-locally))
 
 ;;; --- Input decode map for terminal super/ctrl keys ---
 (define-key input-decode-map "\e[s-s" [s-s])

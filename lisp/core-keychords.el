@@ -1,6 +1,7 @@
 ;;; core-keychords.el --- Key chord bindings -*- lexical-binding: t; -*-
 
 (use-package key-chord
+  :demand t
   :config
   (key-chord-mode 1)
 
